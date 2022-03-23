@@ -48,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -59,6 +60,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ViewSwitcher avw;
     private Button s1Button;
     private Button s2Button;
+    DatePicker mDatePickerDialogFragment;
 
     // My Code
     private ArrayList<Item> items = new ArrayList<Item>();
@@ -94,9 +96,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         tvDate = findViewById(R.id.tvDate);
         Button btPickDate = findViewById(R.id.btPickDate);
         Button btClearDate = findViewById(R.id.btClearDate);
-        btPickDate.setOnClickListener(this);
 
+        Button btJourneyPlanner = findViewById(R.id.btPlannerDate);
+
+
+        btPickDate.setOnClickListener(this);
         btClearDate.setOnClickListener(this);
+        btJourneyPlanner.setOnClickListener(this);
+
 
         startButton = findViewById(R.id.startButton);
         startButton1 = findViewById(R.id.startButton1);
@@ -218,9 +225,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 updateUIHandler.sendMessage(message);
                 break;
             case R.id.btPickDate:
-                com.example.alcantara_javier_s1934603_android.DatePicker mDatePickerDialogFragment;
-                mDatePickerDialogFragment = new com.example.alcantara_javier_s1934603_android.DatePicker();
+                mDatePickerDialogFragment = new DatePicker();
                 mDatePickerDialogFragment.show(getSupportFragmentManager(), "DATE PICK");
+                break;
+            case R.id.btPlannerDate:
+                mDatePickerDialogFragment = new DatePicker();
+                mDatePickerDialogFragment.show(getSupportFragmentManager(), "JOURNEY PICK");
                 break;
             default:
                 break;
@@ -346,17 +356,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 long readLength = 0;
                 Message message = new Message();
 
-
-                Log.e("MyTag","in run");
-
                 try
                 {
-                    Log.e("MyTag","in try");
                     aurl = new URL(url);
                     yc = aurl.openConnection();
                     percent = 100.0 / yc.getContentLength();
                     in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-                    Log.e("MyTag","after ready");
 
                     // Now read the data. Make sure that there are no specific hedrs
                     // in the data file that you need to ignore.
@@ -415,23 +420,54 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         String selectedDate = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.getTime());
 
-        message.what = MESSAGE_UPDATE_DATE;
-        message.obj = selectedDate;
-        // Send message to main thread Handler.
-        updateUIHandler.sendMessage(message);
+        switch (Objects.requireNonNull(mDatePickerDialogFragment.getTag())) {
+            case "DATE PICK":
+                message.what = MESSAGE_UPDATE_DATE;
+                message.obj = selectedDate;
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
 
-        for(int i = 0; i < items.size(); i++) {
-            ArrayList<Integer> itemYearMonthDay = items.get(i).getYearMonthDay();
-            items.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
+                for(int i = 0; i < items.size(); i++) {
+                    ArrayList<Integer> itemYearMonthDay = items.get(i).getYearMonthDay();
+                    items.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
+                }
+
+                ArrayList<Item> aux = (ArrayList<Item>) items.stream().filter(Item::isDisplay).collect(Collectors.toList());
+
+                message = new Message();
+                message.what = MESSAGE_UPDATE_LIST;
+                message.obj = aux;
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
+                break;
+            case "JOURNEY PICK":
+                mMap.clear();
+                LatLng loc = new LatLng(0,0);
+                ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>();
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+                for(int i = 0; i < items.size(); i++) {
+                    ArrayList<Integer> itemYearMonthDay = items.get(i).getYearMonthDay();
+                    if(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth)
+                    {
+                        loc = new LatLng(items.get(i).getLatitude(), items.get(i).getLongitude());
+                        markers.add(new MarkerOptions().position(loc).title("Marker in " + items.get(i)));
+                        mMap.addMarker(markers.get(markers.size()-1));
+                        builder.include(markers.get(markers.size()-1).getPosition());
+                    }
+                }
+
+                if (markers.size() > 0) {
+                    LatLngBounds bounds = builder.build();
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+
+                    mMap.animateCamera(cu);
+                }
+
+
+            default:
+                break;
         }
-
-        ArrayList<Item> aux = (ArrayList<Item>) items.stream().filter(Item::isDisplay).collect(Collectors.toList());
-
-        message = new Message();
-        message.what = MESSAGE_UPDATE_LIST;
-        message.obj = aux;
-        // Send message to main thread Handler.
-        updateUIHandler.sendMessage(message);
 
     }
 }
