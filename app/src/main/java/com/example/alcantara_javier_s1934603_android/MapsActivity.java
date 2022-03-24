@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -29,7 +28,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -56,10 +54,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Array of Items
     private ArrayList<Item> items = new ArrayList<Item>();
+    private ArrayList<Item> incidents = new ArrayList<Item>();
+    private ArrayList<Item> roadWorks = new ArrayList<Item>();
+
+
 
     // Google Maps
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+
+    // Fetch type code.
+    private final static int ROAD_WORKS =0;
+    private final static int INCIDENTS =0;
 
     // Message type code.
     private final static int MESSAGE_UPDATE_LIST =0;
@@ -93,9 +99,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ListView listView;
     private ItemAdapter iAdapter;
 
-    // Text View
-    private TextView selectedDate;
-    private TextView selectedDatePlanner;
 
     // Progress Bar
     private ProgressBar progressBar;
@@ -113,9 +116,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Find ViewSwitcher
         avw = (ViewSwitcher) findViewById(R.id.vwSwitch);
 
-        // Find TextView
-        selectedDate = findViewById(R.id.tvDate);
-        selectedDatePlanner = findViewById(R.id.tvDatePlanner);
+        // fetchFeed("https://trafficscotland.org/rss/feeds/roadworks.aspx", ROAD_WORKS);
 
         // Find Buttons
         btShowMap = (Button) findViewById(R.id.showMapButton);
@@ -152,7 +153,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * we just move the camera towards Glasgow.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -162,7 +163,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-
+        LatLng glasgow = new LatLng(55.860916, -4.251433);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(glasgow, 6));
     }
 
     /**
@@ -180,36 +182,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         switch (view.getId()) {
             case R.id.roadWorksButton:
-                doATaskAsynchronously(roadWorks);
+                fetchFeed(roadWorks, ROAD_WORKS);
 
                 break;
             case R.id.plannedRWButton:
-                doATaskAsynchronously(plannedRoadWorks);
+                fetchFeed(plannedRoadWorks, ROAD_WORKS);
 
                 break;
             case R.id.incButton:
-                doATaskAsynchronously(currentIncidents);
+                fetchFeed(currentIncidents, INCIDENTS);
 
                 break;
             case R.id.showMapButton:
+                avw.showNext();
+                break;
+            case R.id.hideMapButton:
+                avw.showPrevious();
                 message.what = MESSAGE_CLEAR_MARKERS;
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
 
                 message = new Message();
                 message.what = MESSAGE_UPDATE_DATE_PLANNER;
-                message.obj = "Date";
+                message.obj = "Pick Date";
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
-
-                avw.showNext();
-                break;
-            case R.id.hideMapButton:
-                avw.showPrevious();
                 break;
             case R.id.clearDateButton:
                 message.what = MESSAGE_UPDATE_DATE;
-                message.obj = "Date";
+                message.obj = "Pick Date";
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
 
@@ -258,9 +259,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
                         progressBar.setProgress((int) Math.round((Double) msg.obj));
                     } else if (msg.what == MESSAGE_UPDATE_DATE) {
-                        selectedDate.setText((String) msg.obj);
+                        btPickDate.setText((String) msg.obj);
                     } else if (msg.what == MESSAGE_UPDATE_DATE_PLANNER) {
-                        selectedDatePlanner.setText((String) msg.obj);
+                        btPickDatePlanner.setText((String) msg.obj);
                     } else if (msg.what == MESSAGE_ADD_MARKER) {
                         mMap.addMarker((MarkerOptions) msg.obj);
                     } else if (msg.what == MESSAGE_CLEAR_MARKERS) {
@@ -350,7 +351,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Creates a separate Thread to do some work that may be time consuming.
      */
-    private void doATaskAsynchronously(String url)
+    private void fetchFeed(String url, int type)
     {
         Thread workerThread = new Thread()
         {
@@ -433,7 +434,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mCalendar.set(Calendar.YEAR, year);
         mCalendar.set(Calendar.MONTH, month);
         mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        String selectedDate = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.getTime());
+        String selectedDate = DateFormat.getDateInstance(DateFormat.DEFAULT).format(mCalendar.getTime());
 
         switch (Objects.requireNonNull(mDatePickerDialogFragment.getTag())) {
             case "DATE PICK":

@@ -23,13 +23,6 @@
                     android:textAlignment="center"
                     android:text="Welcome to Mobile Platform Development Assignment 2021-2022"
                     />
-                <TextView
-                    android:id="@+id/tvDate"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="Date"
-                    />
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -149,27 +142,15 @@
                 android:layout_gravity="center"
                 android:id="@+id/hideMapButton"
                 />
-            <LinearLayout
+            <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/tvDatePlanner"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="Date"
-                    />
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Pick Date"
-                    android:textSize="20dip"
-                    android:layout_gravity="center"
-                    android:id="@+id/pickDPlannerButton"
-                    />
-            </LinearLayout>
+                android:layout_margin="5dp"
+                android:text="Pick Date"
+                android:textSize="20dip"
+                android:layout_gravity="center"
+                android:id="@+id/pickDPlannerButton"
+                />
         </LinearLayout>
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
