@@ -127,35 +127,31 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:weightSum="100"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20dip"
-            android:text="Map Screen"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:id="@+id/screen1Label"
-            />
+        android:orientation="horizontal">
         <LinearLayout
-            android:layout_height="0dp"
+            android:layout_height="fill_parent"
             android:layout_weight="25"
-            android:orientation="horizontal"
-            android:layout_width="fill_parent">
-            <Button
-                android:layout_width="0dp"
+            android:orientation="vertical"
+            android:layout_width="0dp">
+            <TextView
+                android:id="@+id/tvJourneyPlanner"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="50"
-                android:layout_marginLeft="10dp"
-                android:text="Go To main screen"
+                android:textAlignment="center"
+                android:text="Journey Planner"
+                />
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Go back"
                 android:textSize="20dip"
                 android:layout_gravity="center"
                 android:id="@+id/hideMapButton"
                 />
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="50"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/tvDatePlanner"
@@ -165,8 +161,9 @@
                     android:text="Date"
                     />
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:text="Pick Date"
                     android:textSize="20dip"
                     android:layout_gravity="center"
@@ -177,8 +174,8 @@
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="75"
             android:id="@+id/map"
             tools:context="myandroidstuff.me.org.mapflipperexample.MapsFlipperActivity"
