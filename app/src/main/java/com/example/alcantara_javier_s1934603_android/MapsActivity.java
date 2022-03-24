@@ -53,9 +53,13 @@ import java.util.stream.Collectors;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
     // Array of Items
-    private ArrayList<Item> items = new ArrayList<Item>();
+    // private ArrayList<Item> items = new ArrayList<Item>();
     private ArrayList<Item> incidents = new ArrayList<Item>();
     private ArrayList<Item> roadWorks = new ArrayList<Item>();
+
+    private String roadWorksFeed = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
+    private String plannedRoadWorks = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
+    private String currentIncidents = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
 
 
 
@@ -65,18 +69,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Fetch type code.
     private final static int ROAD_WORKS =0;
-    private final static int INCIDENTS =0;
+    private final static int INCIDENTS =1;
 
     // Message type code.
-    private final static int MESSAGE_UPDATE_LIST =0;
-    private final static int MESSAGE_UPDATE_PERCENTAGE =1;
-    private final static int MESSAGE_UPDATE_DATE =2;
-    private final static int MESSAGE_UPDATE_DATE_PLANNER =3;
-    private final static int MESSAGE_ADD_MARKER =4;
-    private final static int MESSAGE_CLEAR_MARKERS = 5;
+    private final static int MESSAGE_UPDATE_RW_LIST =0;
+    private final static int MESSAGE_UPDATE_INC_LIST =1;
+    private final static int MESSAGE_UPDATE_PERCENTAGE =2;
+    private final static int MESSAGE_UPDATE_DATE =3;
+    private final static int MESSAGE_UPDATE_DATE_PLANNER =4;
+    private final static int MESSAGE_ADD_MARKER =5;
+    private final static int MESSAGE_CLEAR_MARKERS = 6;
 
     // View Switcher
     private ViewSwitcher avw;
+    private ViewSwitcher avw2;
 
     // Buttons
     private Button btShowMap;
@@ -97,7 +103,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // List View and Custom Array Adapter
     private ListView listView;
+    private ListView listView2;
     private ItemAdapter iAdapter;
+    private ItemAdapter iAdapter2;
+
 
 
     // Progress Bar
@@ -115,8 +124,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Find ViewSwitcher
         avw = (ViewSwitcher) findViewById(R.id.vwSwitch);
+        avw2 = (ViewSwitcher) findViewById(R.id.vwSwitch2);
 
-        // fetchFeed("https://trafficscotland.org/rss/feeds/roadworks.aspx", ROAD_WORKS);
+
+        fetchFeed(roadWorksFeed, ROAD_WORKS, false);
+        fetchFeed(plannedRoadWorks, ROAD_WORKS, true);
+        fetchFeed(currentIncidents, INCIDENTS, false);
+
+
 
         // Find Buttons
         btShowMap = (Button) findViewById(R.id.showMapButton);
@@ -142,7 +157,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         progressBar = findViewById(R.id.progressBar);
 
         // Find ListView
-        listView = findViewById(R.id.list);
+        listView = findViewById(R.id.listRoadWorks);
+        listView2 = findViewById(R.id.listIncidents);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -175,22 +191,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onClick(View view) {
         // Traffic Scotland Planned Roadworks XML link
-        String roadWorks = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-        String plannedRoadWorks = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-        String currentIncidents = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
         Message message = new Message();
 
         switch (view.getId()) {
             case R.id.roadWorksButton:
-                fetchFeed(roadWorks, ROAD_WORKS);
-
-                break;
-            case R.id.plannedRWButton:
-                fetchFeed(plannedRoadWorks, ROAD_WORKS);
-
+                // fetchFeed(roadWorksFeed, ROAD_WORKS);
+                
+                avw2.showPrevious();
                 break;
             case R.id.incButton:
-                fetchFeed(currentIncidents, INCIDENTS);
+                // fetchFeed(currentIncidents, INCIDENTS);
+                avw2.showNext();
 
                 break;
             case R.id.showMapButton:
@@ -214,14 +225,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
 
-                for(int i = 0; i < items.size(); i++) {
-                    items.get(i).setDisplay(true);
+                for(int i = 0; i < roadWorks.size(); i++) {
+                    roadWorks.get(i).setDisplay(true);
                 }
 
                 // Set message type.
                 message = new Message();
-                message.what = MESSAGE_UPDATE_LIST;
-                message.obj = items;
+                message.what = MESSAGE_UPDATE_RW_LIST;
+                message.obj = roadWorks;
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
+
+                for(int i = 0; i < incidents.size(); i++) {
+                    incidents.get(i).setDisplay(true);
+                }
+
+                // Set message type.
+                message = new Message();
+                message.what = MESSAGE_UPDATE_INC_LIST;
+                message.obj = incidents;
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
                 break;
@@ -252,11 +274,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 @Override
                 public void handleMessage(Message msg)
                 {
-                    if (msg.what == MESSAGE_UPDATE_LIST){
+                    if (msg.what == MESSAGE_UPDATE_RW_LIST){
                         iAdapter = new ItemAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
                         listView.setAdapter(iAdapter);
-                    } else
-                    if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
+                    } else if (msg.what == MESSAGE_UPDATE_INC_LIST){
+                        iAdapter2 = new ItemAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
+                        listView2.setAdapter(iAdapter2);
+                    } else if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
                         progressBar.setProgress((int) Math.round((Double) msg.obj));
                     } else if (msg.what == MESSAGE_UPDATE_DATE) {
                         btPickDate.setText((String) msg.obj);
@@ -275,7 +299,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Parses the data from a XML feed into a Java Class object.
      */
-    private void parseData(String dataToParse)
+    private void parseData(String dataToParse, int type)
     {
         Item item = new Item();
         try
@@ -290,8 +314,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             int eventType = xpp.getEventType();
 
             // Clean item list first
-            if (items.size() > 0) {
-                items.clear();
+            if (type == ROAD_WORKS) {
+                roadWorks.clear();
+            } else if (type == INCIDENTS) {
+                // items.add(item);
+                incidents.clear();
             }
 
             while (eventType != XmlPullParser.END_DOCUMENT)
@@ -312,7 +339,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     case XmlPullParser.END_TAG:
                         if (tagName.equalsIgnoreCase("item"))
                         {
-                            items.add(item);
+                            if (type == ROAD_WORKS) {
+                                // items.add(item);
+                                roadWorks.add(item);
+                            } else if (type == INCIDENTS) {
+                                // items.add(item);
+                                incidents.add(item);
+                            }
                         }
                         else if (tagName.equalsIgnoreCase("title"))
                         {
@@ -351,7 +384,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Creates a separate Thread to do some work that may be time consuming.
      */
-    private void fetchFeed(String url, int type)
+    private void fetchFeed(String url, int type, boolean showProgress)
     {
         Thread workerThread = new Thread()
         {
@@ -385,22 +418,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         long finalReadLength = readLength;
 
-                        // Set message type.
-                        message = new Message();
-                        message.what = MESSAGE_UPDATE_PERCENTAGE;
-                        message.obj = percent * finalReadLength;
-                        // Send message to main thread Handler.
-                        updateUIHandler.sendMessage(message);
+                        if (showProgress) {
+                            // Set message type.
+                            message = new Message();
+                            message.what = MESSAGE_UPDATE_PERCENTAGE;
+                            message.obj = percent * finalReadLength;
+                            // Send message to main thread Handler.
+                            updateUIHandler.sendMessage(message);
+                        }
                     }
                     in.close();
 
-                    parseData(result);
+                    parseData(result, type);
 
-                    message = new Message();
-                    message.what = MESSAGE_UPDATE_PERCENTAGE;
-                    message.obj = 100.0;
-                    // Send message to main thread Handler.
-                    updateUIHandler.sendMessage(message);
+                    if (showProgress) {
+                        message = new Message();
+                        message.what = MESSAGE_UPDATE_PERCENTAGE;
+                        message.obj = 100.0;
+                        // Send message to main thread Handler.
+                        updateUIHandler.sendMessage(message);
+                    }
 
 
                 }
@@ -412,8 +449,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // Set message type.
                 message = new Message();
-                message.what = MESSAGE_UPDATE_LIST;
-                message.obj = items;
+                if (type == ROAD_WORKS) {
+                    message.what = MESSAGE_UPDATE_RW_LIST;
+                    message.obj = roadWorks;
+                } else if (type == INCIDENTS) {
+                    message.what = MESSAGE_UPDATE_INC_LIST;
+                    message.obj = incidents;
+                }
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
             }
@@ -438,20 +480,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         switch (Objects.requireNonNull(mDatePickerDialogFragment.getTag())) {
             case "DATE PICK":
+                ArrayList<Item> aux = new ArrayList<>();
                 message.what = MESSAGE_UPDATE_DATE;
                 message.obj = selectedDate;
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
 
-                for(int i = 0; i < items.size(); i++) {
-                    ArrayList<Integer> itemYearMonthDay = items.get(i).getYearMonthDay();
-                    items.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
+                message = new Message();
+                if (avw2.getCurrentView() == listView) {
+                    aux = roadWorks;
+                    message.what = MESSAGE_UPDATE_RW_LIST;
+
+                } else {
+                    aux = incidents;
+                    message.what = MESSAGE_UPDATE_INC_LIST;
                 }
 
-                ArrayList<Item> aux = (ArrayList<Item>) items.stream().filter(Item::isDisplay).collect(Collectors.toList());
+                for(int i = 0; i < aux.size(); i++) {
+                    ArrayList<Integer> itemYearMonthDay = aux.get(i).getYearMonthDay();
+                    aux.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
+                }
 
-                message = new Message();
-                message.what = MESSAGE_UPDATE_LIST;
+                aux = (ArrayList<Item>) aux.stream().filter(Item::isDisplay).collect(Collectors.toList());
+
+
                 message.obj = aux;
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
@@ -472,12 +524,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>();
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-                for(int i = 0; i < items.size(); i++) {
-                    ArrayList<Integer> itemYearMonthDay = items.get(i).getYearMonthDay();
+                for(int i = 0; i < roadWorks.size(); i++) {
+                    ArrayList<Integer> itemYearMonthDay = roadWorks.get(i).getYearMonthDay();
                     if(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth)
                     {
-                        loc = new LatLng(items.get(i).getLatitude(), items.get(i).getLongitude());
-                        markers.add(new MarkerOptions().position(loc).title("Marker in " + items.get(i)));
+                        loc = new LatLng(roadWorks.get(i).getLatitude(), roadWorks.get(i).getLongitude());
+                        markers.add(new MarkerOptions().position(loc).title("Marker in " + roadWorks.get(i)));
 
                         message = new Message();
                         message.what = MESSAGE_ADD_MARKER;
