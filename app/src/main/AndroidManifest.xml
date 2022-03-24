@@ -3,6 +3,9 @@
     package="com.example.alcantara_javier_s1934603_android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <permission
+        android:name="com.app.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
 
     <application
         android:allowBackup="true"

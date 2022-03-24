@@ -54,31 +54,50 @@ import java.util.stream.Collectors;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener {
 
+    // Array of Items
+    private ArrayList<Item> items = new ArrayList<Item>();
+
+    // Google Maps
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
 
-    private ViewSwitcher avw;
-    private Button s1Button;
-    private Button s2Button;
-    DatePicker mDatePickerDialogFragment;
-
-    // My Code
-    private ArrayList<Item> items = new ArrayList<Item>();
-    private Handler updateUIHandler = null;
     // Message type code.
     private final static int MESSAGE_UPDATE_LIST =0;
     private final static int MESSAGE_UPDATE_PERCENTAGE =1;
     private final static int MESSAGE_UPDATE_DATE =2;
+    private final static int MESSAGE_UPDATE_DATE_PLANNER =3;
+    private final static int MESSAGE_ADD_MARKER =4;
+    private final static int MESSAGE_CLEAR_MARKERS = 5;
 
-    private String result = "";
+    // View Switcher
+    private ViewSwitcher avw;
 
+    // Buttons
+    private Button btShowMap;
+    private Button btHideMap;
+    private Button btPickDate;
+    private Button btClearDate;
+    private Button btPickDatePlanner;
+    private Button btRWorks;
+    private Button btPlannedRWorks;
+    private Button btIncidents;
+
+    // Date Picker
+    DatePicker mDatePickerDialogFragment;
+
+    // UI Handler
+    private Handler updateUIHandler = null;
+
+
+    // List View and Custom Array Adapter
     private ListView listView;
     private ItemAdapter iAdapter;
-    private TextView tvDate;
 
-    private Button startButton;
-    private Button startButton1;
-    private Button startButton2;
+    // Text View
+    private TextView selectedDate;
+    private TextView selectedDatePlanner;
+
+    // Progress Bar
     private ProgressBar progressBar;
 
     @Override
@@ -91,36 +110,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Initialize Handler.
         createUpdateUiHandler();
 
+        // Find ViewSwitcher
         avw = (ViewSwitcher) findViewById(R.id.vwSwitch);
 
-        tvDate = findViewById(R.id.tvDate);
-        Button btPickDate = findViewById(R.id.btPickDate);
-        Button btClearDate = findViewById(R.id.btClearDate);
+        // Find TextView
+        selectedDate = findViewById(R.id.tvDate);
+        selectedDatePlanner = findViewById(R.id.tvDatePlanner);
 
-        Button btJourneyPlanner = findViewById(R.id.btPlannerDate);
+        // Find Buttons
+        btShowMap = (Button) findViewById(R.id.showMapButton);
+        btHideMap = (Button) findViewById(R.id.hideMapButton);
+        btPickDate = findViewById(R.id.pickDButton);
+        btClearDate = findViewById(R.id.clearDateButton);
+        btPickDatePlanner = findViewById(R.id.pickDPlannerButton);
+        btRWorks = findViewById(R.id.roadWorksButton);
+        btPlannedRWorks = findViewById(R.id.plannedRWButton);
+        btIncidents = findViewById(R.id.incButton);
 
-
+        // Click listeners
+        btShowMap.setOnClickListener(this);
+        btHideMap.setOnClickListener(this);
         btPickDate.setOnClickListener(this);
         btClearDate.setOnClickListener(this);
-        btJourneyPlanner.setOnClickListener(this);
+        btPickDatePlanner.setOnClickListener(this);
+        btRWorks.setOnClickListener(this);
+        btPlannedRWorks.setOnClickListener(this);
+        btIncidents.setOnClickListener(this);
 
-
-        startButton = findViewById(R.id.startButton);
-        startButton1 = findViewById(R.id.startButton1);
-        startButton2 = findViewById(R.id.startButton2);
-
-        startButton.setOnClickListener(this);
-        startButton1.setOnClickListener(this);
-        startButton2.setOnClickListener(this);
-
+        // Find Progress Bar
         progressBar = findViewById(R.id.progressBar);
 
+        // Find ListView
         listView = findViewById(R.id.list);
-
-        s1Button = (Button) findViewById(R.id.screen1Button);
-        s2Button = (Button) findViewById(R.id.screen2Button);
-        s1Button.setOnClickListener(this);
-        s2Button.setOnClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -140,16 +161,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.getUiSettings().setRotateGesturesEnabled(true);
-        mMap.getUiSettings().setScrollGesturesEnabled(true);
-        mMap.getUiSettings().setTiltGesturesEnabled(true);
 
-        // Add a marker in Sydney and move the camera
-        // LatLng sydney = new LatLng(-34, 151);
-        // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
     }
 
+    /**
+     * Handles different actions taken on all the buttons.
+     * A switch statement separates the use cases in a clean and organized way.
+     */
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
@@ -157,57 +176,38 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         String roadWorks = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
         String plannedRoadWorks = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
         String currentIncidents = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
+        Message message = new Message();
 
         switch (view.getId()) {
-            case R.id.startButton:
+            case R.id.roadWorksButton:
                 doATaskAsynchronously(roadWorks);
 
-                startButton.setTextColor(Color.YELLOW);
-                startButton1.setTextColor(Color.WHITE);
-                startButton2.setTextColor(Color.WHITE);
                 break;
-            case R.id.startButton1:
+            case R.id.plannedRWButton:
                 doATaskAsynchronously(plannedRoadWorks);
 
-                startButton.setTextColor(Color.WHITE);
-                startButton1.setTextColor(Color.YELLOW);
-                startButton2.setTextColor(Color.WHITE);
                 break;
-            case R.id.startButton2:
+            case R.id.incButton:
                 doATaskAsynchronously(currentIncidents);
 
-                startButton.setTextColor(Color.WHITE);
-                startButton1.setTextColor(Color.WHITE);
-                startButton2.setTextColor(Color.YELLOW);
                 break;
-            case R.id.screen1Button:
+            case R.id.showMapButton:
+                message.what = MESSAGE_CLEAR_MARKERS;
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
+
+                message = new Message();
+                message.what = MESSAGE_UPDATE_DATE_PLANNER;
+                message.obj = "Date";
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
+
                 avw.showNext();
-
-                /* if (items.size() > 0) {
-                    LatLng loc = new LatLng(0,0);
-                    ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>();
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-
-                    for (int i = 0; i < items.size(); i++) {
-                        if (items.get(i).isDisplay()) {
-                            loc = new LatLng(items.get(i).getLatitude(), items.get(i).getLongitude());
-                            markers.add(new MarkerOptions().position(loc).title("Marker in " + items.get(i)));
-                            mMap.addMarker(markers.get(i));
-                            builder.include(markers.get(i).getPosition());
-                        }
-                    }
-
-                    LatLngBounds bounds = builder.build();
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 100, 100, 0);
-
-                    mMap.moveCamera(cu);
-                } */
                 break;
-            case R.id.screen2Button:
+            case R.id.hideMapButton:
                 avw.showPrevious();
                 break;
-            case R.id.btClearDate:
-                Message message = new Message();
+            case R.id.clearDateButton:
                 message.what = MESSAGE_UPDATE_DATE;
                 message.obj = "Date";
                 // Send message to main thread Handler.
@@ -224,11 +224,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
                 break;
-            case R.id.btPickDate:
+            case R.id.pickDButton:
                 mDatePickerDialogFragment = new DatePicker();
                 mDatePickerDialogFragment.show(getSupportFragmentManager(), "DATE PICK");
                 break;
-            case R.id.btPlannerDate:
+            case R.id.pickDPlannerButton:
                 mDatePickerDialogFragment = new DatePicker();
                 mDatePickerDialogFragment.show(getSupportFragmentManager(), "JOURNEY PICK");
                 break;
@@ -238,7 +238,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    /* Create Handler object in main thread. */
+    /**
+     * Create Handler object in main thread.
+     * The handleMessage method listens for incoming updates that should change the UI.
+     */
     private void createUpdateUiHandler()
     {
         if(updateUIHandler == null)
@@ -248,21 +251,29 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 @Override
                 public void handleMessage(Message msg)
                 {
-                    // Means the message is sent from child thread.
                     if (msg.what == MESSAGE_UPDATE_LIST){
                         iAdapter = new ItemAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
                         listView.setAdapter(iAdapter);
                     } else
                     if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
                         progressBar.setProgress((int) Math.round((Double) msg.obj));
-                    } else {
-                        tvDate.setText((String) msg.obj);
+                    } else if (msg.what == MESSAGE_UPDATE_DATE) {
+                        selectedDate.setText((String) msg.obj);
+                    } else if (msg.what == MESSAGE_UPDATE_DATE_PLANNER) {
+                        selectedDatePlanner.setText((String) msg.obj);
+                    } else if (msg.what == MESSAGE_ADD_MARKER) {
+                        mMap.addMarker((MarkerOptions) msg.obj);
+                    } else if (msg.what == MESSAGE_CLEAR_MARKERS) {
+                        mMap.clear();
                     }
                 }
             };
         }
     }
 
+    /**
+     * Parses the data from a XML feed into a Java Class object.
+     */
     private void parseData(String dataToParse)
     {
         Item item = new Item();
@@ -274,7 +285,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
-            xpp.setInput( new StringReader(result));
+            xpp.setInput( new StringReader(dataToParse));
             int eventType = xpp.getEventType();
 
             // Clean item list first
@@ -334,20 +345,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (XmlPullParserException | ParseException | IOException e) {
             e.printStackTrace();
         }
-
-        Log.e("MyTag","End document");
-
     }
 
+    /**
+     * Creates a separate Thread to do some work that may be time consuming.
+     */
     private void doATaskAsynchronously(String url)
     {
-        // Code here will create a separate Thread to do some
-        // work that may be time consuming
         Thread workerThread = new Thread()
         {
             @Override
             public void run()
             {
+                String result = "";
                 URL aurl;
                 URLConnection yc;
                 BufferedReader in = null;
@@ -410,6 +420,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         workerThread.start();
     }
 
+    /**
+     * When a date is choosing in the DatePicker, this method triggers.
+     * Since there are 2 DatePickers, each one has a different tag - it makes it easy
+     * to recognize which action to do depending on the tag.
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int dayOfMonth) {
@@ -441,7 +456,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 updateUIHandler.sendMessage(message);
                 break;
             case "JOURNEY PICK":
-                mMap.clear();
+
+                message.what = MESSAGE_CLEAR_MARKERS;
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
+
+                message = new Message();
+                message.what = MESSAGE_UPDATE_DATE_PLANNER;
+                message.obj = selectedDate;
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
+
                 LatLng loc = new LatLng(0,0);
                 ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>();
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -452,7 +477,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     {
                         loc = new LatLng(items.get(i).getLatitude(), items.get(i).getLongitude());
                         markers.add(new MarkerOptions().position(loc).title("Marker in " + items.get(i)));
-                        mMap.addMarker(markers.get(markers.size()-1));
+
+                        message = new Message();
+                        message.what = MESSAGE_ADD_MARKER;
+                        message.obj = markers.get(markers.size()-1);
+                        // Send message to main thread Handler.
+                        updateUIHandler.sendMessage(message);
+
                         builder.include(markers.get(markers.size()-1).getPosition());
                     }
                 }

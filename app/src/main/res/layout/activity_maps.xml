@@ -32,7 +32,7 @@
             android:layout_gravity="center"
             />
         <Button
-            android:id="@+id/screen1Button"
+            android:id="@+id/showMapButton"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <Button
-                android:id="@+id/btPickDate"
+                android:id="@+id/pickDButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="2"
@@ -52,7 +52,7 @@
                 android:text="Pick Date"
                 />
             <Button
-                android:id="@+id/btClearDate"
+                android:id="@+id/clearDateButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
@@ -68,7 +68,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/startButton"
+                android:id="@+id/roadWorksButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
@@ -77,7 +77,7 @@
                 />
 
             <Button
-                android:id="@+id/startButton1"
+                android:id="@+id/plannedRWButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
@@ -86,7 +86,7 @@
                 />
 
             <Button
-                android:id="@+id/startButton2"
+                android:id="@+id/incButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
@@ -128,7 +128,14 @@
             android:text="Go to main screen"
             android:textSize="20dip"
             android:layout_gravity="center"
-            android:id="@+id/screen2Button"
+            android:id="@+id/hideMapButton"
+            />
+        <TextView
+            android:id="@+id/tvDatePlanner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Date"
             />
         <Button
             android:layout_width="wrap_content"
@@ -136,7 +143,7 @@
             android:text="Pick Date"
             android:textSize="20dip"
             android:layout_gravity="center"
-            android:id="@+id/btPlannerDate"
+            android:id="@+id/pickDPlannerButton"
             />
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
