@@ -11,23 +11,18 @@ import com.example.alcantara_javier_s1934603_android.R;
 import com.example.alcantara_javier_s1934603_android.model.Item;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
-public class ItemAdapter extends ArrayAdapter<Item> {
+public class RoadWAdapter extends ArrayAdapter<Item> {
 
     private final Context iContext;
     private static ArrayList<Item> itemsList = new ArrayList<>();
 
-    public ItemAdapter(Context context, ArrayList<Item> list) {
+    public RoadWAdapter(Context context, ArrayList<Item> list) {
         super(context, 0 , list);
         iContext = context;
         itemsList = list;
-    }
-
-    public void updateItems(ArrayList<Item> newList) {
-        itemsList.clear();
-        itemsList.addAll(newList);
-        this.notifyDataSetChanged();
     }
 
     @Override

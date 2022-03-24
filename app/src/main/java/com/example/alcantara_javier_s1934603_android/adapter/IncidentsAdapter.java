@@ -13,12 +13,12 @@ import com.example.alcantara_javier_s1934603_android.model.Item;
 import java.util.ArrayList;
 
 
-public class ItemAdapter2 extends ArrayAdapter<Item> {
+public class IncidentsAdapter extends ArrayAdapter<Item> {
 
     private final Context iContext;
     private static ArrayList<Item> itemsList = new ArrayList<>();
 
-    public ItemAdapter2(Context context, ArrayList<Item> list) {
+    public IncidentsAdapter(Context context, ArrayList<Item> list) {
         super(context, 0 , list);
         iContext = context;
         itemsList = list;

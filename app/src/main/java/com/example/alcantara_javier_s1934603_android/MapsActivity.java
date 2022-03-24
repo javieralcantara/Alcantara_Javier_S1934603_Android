@@ -8,8 +8,8 @@ import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.example.alcantara_javier_s1934603_android.adapter.ItemAdapter;
-import com.example.alcantara_javier_s1934603_android.adapter.ItemAdapter2;
+import com.example.alcantara_javier_s1934603_android.adapter.RoadWAdapter;
+import com.example.alcantara_javier_s1934603_android.adapter.IncidentsAdapter;
 import com.example.alcantara_javier_s1934603_android.model.Item;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,7 +49,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -77,13 +76,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final static int INCIDENTS =1;
 
     // Message type code.
-    private final static int MESSAGE_UPDATE_RW_LIST =0;
-    private final static int MESSAGE_UPDATE_INC_LIST =1;
-    private final static int MESSAGE_UPDATE_PERCENTAGE =2;
-    private final static int MESSAGE_UPDATE_DATE =3;
-    private final static int MESSAGE_UPDATE_DATE_PLANNER =4;
-    private final static int MESSAGE_ADD_MARKER =5;
-    private final static int MESSAGE_CLEAR_MARKERS = 6;
+    private final static int MESSAGE_INIT_RW_LIST =0;
+    private final static int MESSAGE_INIT_INC_LIST =1;
+    private final static int MESSAGE_UPDATE_RW_LIST =2;
+    private final static int MESSAGE_UPDATE_INC_LIST =3;
+    private final static int MESSAGE_UPDATE_PERCENTAGE =4;
+    private final static int MESSAGE_UPDATE_DATE =5;
+    private final static int MESSAGE_UPDATE_DATE_PLANNER =6;
+    private final static int MESSAGE_ADD_MARKER =7;
+    private final static int MESSAGE_CLEAR_MARKERS = 8;
 
     // View Switcher
     private ViewSwitcher avw;
@@ -106,8 +107,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // List View and Custom Array Adapter
     private ListView listView;
     private ListView listView2;
-    private ItemAdapter iAdapter;
-    private ItemAdapter2 iAdapter2;
+    private RoadWAdapter iAdapter;
+    private IncidentsAdapter iAdapter2;
 
 
 
@@ -162,8 +163,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         listView = findViewById(R.id.listRoadWorks);
         listView2 = findViewById(R.id.listIncidents);
 
-        iAdapter = new ItemAdapter(MapsActivity.this, roadWorks);
-        iAdapter2 = new ItemAdapter2(MapsActivity.this, incidents);
+        iAdapter = new RoadWAdapter(MapsActivity.this, roadWorks);
+        iAdapter2 = new IncidentsAdapter(MapsActivity.this, incidents);
 
         listView.setAdapter(iAdapter);
         listView2.setAdapter(iAdapter2);
@@ -272,12 +273,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 @Override
                 public void handleMessage(Message msg)
                 {
-                    if (msg.what == MESSAGE_UPDATE_RW_LIST){
+                    if (msg.what == MESSAGE_INIT_RW_LIST){
                         iAdapter.addAll((ArrayList<Item>) msg.obj);
-                        iAdapter.notifyDataSetChanged();
-                    } else if (msg.what == MESSAGE_UPDATE_INC_LIST){
+                    } else if (msg.what == MESSAGE_INIT_INC_LIST){
                         iAdapter2.addAll((ArrayList<Item>) msg.obj);
-                        iAdapter2.notifyDataSetChanged();
+                    } else if (msg.what == MESSAGE_UPDATE_RW_LIST){
+                        iAdapter = new RoadWAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
+                        listView.setAdapter(iAdapter);
+                    } else if (msg.what == MESSAGE_UPDATE_INC_LIST){
+                        iAdapter2 = new IncidentsAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
+                        listView2.setAdapter(iAdapter2);
                     } else if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
                         progressBar.setProgress((int) Math.round((Double) msg.obj));
                     } else if (msg.what == MESSAGE_UPDATE_DATE) {
@@ -452,10 +457,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Set message type.
                 message = new Message();
                 if (type == ROAD_WORKS) {
-                    message.what = MESSAGE_UPDATE_RW_LIST;
+                    message.what = MESSAGE_INIT_RW_LIST;
                     message.obj = roadWorks;
                 } else if (type == INCIDENTS) {
-                    message.what = MESSAGE_UPDATE_INC_LIST;
+                    message.what = MESSAGE_INIT_INC_LIST;
                     message.obj = incidents;
                 }
                 // Send message to main thread Handler.
@@ -489,26 +494,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 updateUIHandler.sendMessage(message);
 
                 message = new Message();
-                if (avw2.getCurrentView() == listView) {
-                    aux = roadWorks;
-                    message.what = MESSAGE_UPDATE_RW_LIST;
 
-                } else {
-                    aux = incidents;
-                    message.what = MESSAGE_UPDATE_INC_LIST;
+                for(int i = 0; i < roadWorks.size(); i++) {
+                    ArrayList<Integer> itemYearMonthDay = roadWorks.get(i).getYearMonthDay();
+                    roadWorks.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
                 }
 
-                for(int i = 0; i < aux.size(); i++) {
-                    ArrayList<Integer> itemYearMonthDay = aux.get(i).getYearMonthDay();
-                    aux.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
-                }
-
-                aux = (ArrayList<Item>) aux.stream().filter(Item::isDisplay).collect(Collectors.toList());
-
+                aux = (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
 
                 message.obj = aux;
-                // Send message to main thread Handler.
+                message.what = MESSAGE_UPDATE_RW_LIST;
                 updateUIHandler.sendMessage(message);
+
+                message = new Message();
+
+                for(int i = 0; i < incidents.size(); i++) {
+                    ArrayList<Integer> itemYearMonthDay = incidents.get(i).getYearMonthDay();
+                    incidents.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
+                }
+
+                aux = (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
+
+                message.obj = aux;
+                message.what = MESSAGE_UPDATE_INC_LIST;
+                updateUIHandler.sendMessage(message);
+
                 break;
             case "JOURNEY PICK":
 
