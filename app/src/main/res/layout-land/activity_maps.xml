@@ -61,8 +61,13 @@
                         android:text="Clear"
                         />
                 </LinearLayout>
-
-                <LinearLayout
+                <Spinner
+                    android:id="@+id/vSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    />
+                <!--<LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -92,7 +97,7 @@
                         android:layout_weight="1"
                         android:layout_margin="2dp"
                         android:text="Incidents"/>
-                </LinearLayout>
+                </LinearLayout>-->
             </LinearLayout>
         </ScrollView>
         <LinearLayout
@@ -108,12 +113,23 @@
                 android:textAlignment="center"
                 android:text="Contains Traffic Scotland Data"
                 />
-            <ListView
-                android:id="@+id/listRoadWorks"
+            <ViewSwitcher
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:dividerHeight="1dp"
-                />
+                android:layout_height="fill_parent"
+                android:id="@+id/vwSwitch2" >
+                <ListView
+                    android:id="@+id/listRoadWorks"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:dividerHeight="1dp"
+                    />
+                <ListView
+                    android:id="@+id/listIncidents"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:dividerHeight="1dp"
+                    />
+            </ViewSwitcher>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout

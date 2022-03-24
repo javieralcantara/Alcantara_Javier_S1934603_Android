@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.example.alcantara_javier_s1934603_android.adapter.ItemAdapter;
+import com.example.alcantara_javier_s1934603_android.adapter.ItemAdapter2;
 import com.example.alcantara_javier_s1934603_android.model.Item;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -25,9 +26,12 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.ViewSwitcher;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -45,15 +49,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener {
 
     // Array of Items
-    // private ArrayList<Item> items = new ArrayList<Item>();
     private ArrayList<Item> incidents = new ArrayList<Item>();
     private ArrayList<Item> roadWorks = new ArrayList<Item>();
 
@@ -61,6 +65,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String plannedRoadWorks = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
     private String currentIncidents = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
 
+    private Spinner viewSpinner;
 
 
     // Google Maps
@@ -90,9 +95,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button btPickDate;
     private Button btClearDate;
     private Button btPickDatePlanner;
-    private Button btRWorks;
-    private Button btPlannedRWorks;
-    private Button btIncidents;
 
     // Date Picker
     DatePicker mDatePickerDialogFragment;
@@ -105,7 +107,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ListView listView;
     private ListView listView2;
     private ItemAdapter iAdapter;
-    private ItemAdapter iAdapter2;
+    private ItemAdapter2 iAdapter2;
 
 
 
@@ -131,6 +133,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fetchFeed(plannedRoadWorks, ROAD_WORKS, true);
         fetchFeed(currentIncidents, INCIDENTS, false);
 
+        viewSpinner = (Spinner) findViewById(R.id.vSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dataSources, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        viewSpinner.setAdapter(adapter);
+        viewSpinner.setOnItemSelectedListener(this);
+
 
 
         // Find Buttons
@@ -139,9 +147,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         btPickDate = findViewById(R.id.pickDButton);
         btClearDate = findViewById(R.id.clearDateButton);
         btPickDatePlanner = findViewById(R.id.pickDPlannerButton);
-        btRWorks = findViewById(R.id.roadWorksButton);
-        btPlannedRWorks = findViewById(R.id.plannedRWButton);
-        btIncidents = findViewById(R.id.incButton);
 
         // Click listeners
         btShowMap.setOnClickListener(this);
@@ -149,9 +154,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         btPickDate.setOnClickListener(this);
         btClearDate.setOnClickListener(this);
         btPickDatePlanner.setOnClickListener(this);
-        btRWorks.setOnClickListener(this);
-        btPlannedRWorks.setOnClickListener(this);
-        btIncidents.setOnClickListener(this);
 
         // Find Progress Bar
         progressBar = findViewById(R.id.progressBar);
@@ -159,6 +161,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Find ListView
         listView = findViewById(R.id.listRoadWorks);
         listView2 = findViewById(R.id.listIncidents);
+
+        iAdapter = new ItemAdapter(MapsActivity.this, roadWorks);
+        iAdapter2 = new ItemAdapter2(MapsActivity.this, incidents);
+
+        listView.setAdapter(iAdapter);
+        listView2.setAdapter(iAdapter2);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -194,16 +202,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Message message = new Message();
 
         switch (view.getId()) {
-            case R.id.roadWorksButton:
-                // fetchFeed(roadWorksFeed, ROAD_WORKS);
-                
-                avw2.showPrevious();
-                break;
-            case R.id.incButton:
-                // fetchFeed(currentIncidents, INCIDENTS);
-                avw2.showNext();
-
-                break;
             case R.id.showMapButton:
                 avw.showNext();
                 break;
@@ -275,11 +273,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void handleMessage(Message msg)
                 {
                     if (msg.what == MESSAGE_UPDATE_RW_LIST){
-                        iAdapter = new ItemAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
-                        listView.setAdapter(iAdapter);
+                        iAdapter.addAll((ArrayList<Item>) msg.obj);
+                        iAdapter.notifyDataSetChanged();
                     } else if (msg.what == MESSAGE_UPDATE_INC_LIST){
-                        iAdapter2 = new ItemAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
-                        listView2.setAdapter(iAdapter2);
+                        iAdapter2.addAll((ArrayList<Item>) msg.obj);
+                        iAdapter2.notifyDataSetChanged();
                     } else if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
                         progressBar.setProgress((int) Math.round((Double) msg.obj));
                     } else if (msg.what == MESSAGE_UPDATE_DATE) {
@@ -299,6 +297,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Parses the data from a XML feed into a Java Class object.
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void parseData(String dataToParse, int type)
     {
         Item item = new Item();
@@ -314,12 +313,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             int eventType = xpp.getEventType();
 
             // Clean item list first
-            if (type == ROAD_WORKS) {
+            /* if (type == ROAD_WORKS) {
                 roadWorks.clear();
             } else if (type == INCIDENTS) {
                 // items.add(item);
                 incidents.clear();
-            }
+            }*/
 
             while (eventType != XmlPullParser.END_DOCUMENT)
             {
@@ -376,6 +375,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 eventType = xpp.next();
             }
+            // roadWorks.sort((r1, r2) -> r1.getDate().before(r2.getDate())  ? 1 : 0);
+            // incidents.sort((r1, r2) -> r1.getDate().before(r2.getDate())  ? 1 : 0);
         } catch (XmlPullParserException | ParseException | IOException e) {
             e.printStackTrace();
         }
@@ -388,6 +389,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         Thread workerThread = new Thread()
         {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run()
             {
@@ -552,6 +554,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             default:
                 break;
         }
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String text = (String)viewSpinner.getSelectedItem();
+        View currentView = avw2.getCurrentView();
+
+        if (currentView == listView && text.equalsIgnoreCase("incidents")) {
+            avw2.showNext();
+        } else if (currentView == listView2 && text.equalsIgnoreCase("road works")) {
+            avw2.showPrevious();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
 }
