@@ -44,9 +44,11 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -310,6 +312,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
             String text = "";
             SimpleDateFormat parser = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz", Locale.UK);
+            SimpleDateFormat descParser = new SimpleDateFormat("EEEE, d MMMM yyyy - HH:mm", Locale.UK);
+
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -358,6 +362,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         else if (tagName.equalsIgnoreCase("description"))
                         {
                             item.setDescription(text);
+                            if (text.contains("Start Date:") && text.contains("End Date:")) {
+                                String[] split = text.split("<br />");
+                                item.setStartDate(descParser.parse(split[0].substring(12)));
+                                item.setEndDate(descParser.parse(split[1].substring(10)));
+                            }
                         }
                         else if (tagName.equalsIgnoreCase("link"))
                         {
@@ -475,7 +484,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * Since there are 2 DatePickers, each one has a different tag - it makes it easy
      * to recognize which action to do depending on the tag.
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onDateSet(android.widget.DatePicker datePicker, int year, int month, int dayOfMonth) {
         Calendar mCalendar = Calendar.getInstance();
@@ -496,8 +505,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 message = new Message();
 
                 for(int i = 0; i < roadWorks.size(); i++) {
-                    ArrayList<Integer> itemYearMonthDay = roadWorks.get(i).getYearMonthDay();
-                    roadWorks.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
+                    Item currentItem = roadWorks.get(i);
+                    roadWorks.get(i).setDisplay(mCalendar.getTime().after(currentItem.getStartDate()) && mCalendar.getTime().before(currentItem.getEndDate()));
                 }
 
                 aux = (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
@@ -537,8 +546,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
                 for(int i = 0; i < roadWorks.size(); i++) {
-                    ArrayList<Integer> itemYearMonthDay = roadWorks.get(i).getYearMonthDay();
-                    if(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth)
+                    Item currentItem = roadWorks.get(i);
+                    if(mCalendar.getTime().after(currentItem.getStartDate()) && mCalendar.getTime().before(currentItem.getEndDate()))
                     {
                         loc = new LatLng(roadWorks.get(i).getLatitude(), roadWorks.get(i).getLongitude());
                         markers.add(new MarkerOptions().position(loc).title("Marker in " + roadWorks.get(i)));

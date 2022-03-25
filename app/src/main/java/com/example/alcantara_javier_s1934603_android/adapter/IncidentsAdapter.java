@@ -1,6 +1,5 @@
 package com.example.alcantara_javier_s1934603_android.adapter;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ public class IncidentsAdapter extends ArrayAdapter<Item> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View listItem = convertView;
         if(listItem == null)
-            listItem = LayoutInflater.from(iContext).inflate(R.layout.item,parent,false);
+            listItem = LayoutInflater.from(iContext).inflate(R.layout.incident,parent,false);
 
         Item currentItem = itemsList.get(position);
 

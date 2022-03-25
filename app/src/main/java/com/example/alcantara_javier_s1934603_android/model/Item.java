@@ -16,6 +16,8 @@ public class Item {
     private Float latitude;
     private Float longitude;
     private Date date;
+    private Date startDate;
+    private Date endDate;
     // When filter by date, if not found set to false
     private boolean display;
 
@@ -106,5 +108,33 @@ public class Item {
 
     public void setDisplay(boolean display) {
         this.display = display;
+    }
+
+    public String getParsedStartDate() {
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy - HH:mm");
+
+        return df.format(startDate);
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getParsedEndDate() {
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy - HH:mm");
+
+        return df.format(endDate);
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }
