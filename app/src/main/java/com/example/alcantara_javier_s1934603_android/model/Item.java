@@ -118,7 +118,7 @@ public class Item {
     }
 
     public String getParsedStartDate() {
-        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy - HH:mm");
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy");
 
         return df.format(startDate);
     }
@@ -132,7 +132,7 @@ public class Item {
     }
 
     public String getParsedEndDate() {
-        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy - HH:mm");
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy");
 
         return df.format(endDate);
     }

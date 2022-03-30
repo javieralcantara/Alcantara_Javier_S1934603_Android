@@ -14,6 +14,8 @@ import com.example.alcantara_javier_s1934603_android.R;
 import com.example.alcantara_javier_s1934603_android.model.Item;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +61,25 @@ public class RoadWAdapter extends ArrayAdapter<Item> {
 
         TextView endDate = (TextView) listItem.findViewById(R.id.endDate);
         endDate.setText(String.format("End Date: %s", currentItem.getParsedEndDate()));
+
+        LocalDate localStart = currentItem.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localEnd = currentItem.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+
+        long daysBetween = ChronoUnit.DAYS.between(localStart, localEnd);
+
+        TextView duration = (TextView) listItem.findViewById(R.id.duration);
+        duration.setText(String.format("Duration: %s days", daysBetween));
+
+        if (daysBetween > 180) {
+            duration.setTextColor(Color.RED);
+        } else if (daysBetween > 30) {
+            duration.setTextColor(Color.rgb(255,140,0));
+        } else if (daysBetween > 10) {
+            duration.setTextColor(Color.rgb(0,100,0));
+        } else {
+            duration.setTextColor(Color.BLUE);
+        }
 
         Instant now = Instant.now();
 
