@@ -4,7 +4,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -32,6 +35,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -56,7 +61,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
 
     // Array of Items
     private ArrayList<Item> incidents = new ArrayList<Item>();
@@ -165,11 +170,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         listView = findViewById(R.id.listRoadWorks);
         listView2 = findViewById(R.id.listIncidents);
 
+        // ListView Custom ArrayAdapters
         iAdapter = new RoadWAdapter(MapsActivity.this, roadWorks);
         iAdapter2 = new IncidentsAdapter(MapsActivity.this, incidents);
 
+        // Set Adapter to ListView
         listView.setAdapter(iAdapter);
         listView2.setAdapter(iAdapter2);
+
+        // Listen on Clicking on an Item
+        listView.setOnItemClickListener(this);
+        listView2.setOnItemClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -591,5 +602,65 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    private void showtbDialog(Item item)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(item.getTitle() + item.getDescription());
+        builder.setCancelable(false);
+        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void showcustomDialog(Item item)
+    {
+        // Custom dialog setup
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.item_dialog);
+        dialog.setTitle("Custom Dialog Example");
+
+        // Set the custom dialog components as a TextView and Button component
+        TextView title = (TextView) dialog.findViewById(R.id.title);
+        TextView description = (TextView) dialog.findViewById(R.id.description);
+        TextView date = (TextView) dialog.findViewById(R.id.date);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+
+        title.setText(item.getTitle());
+        description.setText(item.getDescription());
+        date.setText(String.format("Start date: %s", item.getParsedDate()));
+
+        dialogButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dialog.dismiss();
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        switch (adapterView.getId()) {
+            case R.id.listRoadWorks:
+                showcustomDialog(roadWorks.get(i));
+                break;
+            case R.id.listIncidents:
+                showcustomDialog(incidents.get(i));
+                break;
+            default:
+                break;
+        }
     }
 }
