@@ -9,6 +9,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Author:           Javier Alcántara García
+// Email:            jalcan200@caledonian.ac.uk
+// Student ID:       S1934603
+//
+///////////////////////////////////////////////////////////////////////////////
 public class Item {
     private String title;
     private String description;

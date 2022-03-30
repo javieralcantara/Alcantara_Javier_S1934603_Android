@@ -12,6 +12,13 @@ import com.example.alcantara_javier_s1934603_android.model.Item;
 import java.util.ArrayList;
 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Author:           Javier Alcántara García
+// Email:            jalcan200@caledonian.ac.uk
+// Student ID:       S1934603
+//
+///////////////////////////////////////////////////////////////////////////////
 public class IncidentsAdapter extends ArrayAdapter<Item> {
 
     private final Context iContext;

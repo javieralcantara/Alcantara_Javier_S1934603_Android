@@ -63,7 +63,13 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
+///////////////////////////////////////////////////////////////////////////////
+//
+// Author:           Javier Alcántara García
+// Email:            jalcan200@caledonian.ac.uk
+// Student ID:       S1934603
+//
+///////////////////////////////////////////////////////////////////////////////
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, TextWatcher {
 
     // Array of Items

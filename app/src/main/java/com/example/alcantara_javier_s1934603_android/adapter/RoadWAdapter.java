@@ -18,7 +18,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
-
+///////////////////////////////////////////////////////////////////////////////
+//
+// Author:           Javier Alcántara García
+// Email:            jalcan200@caledonian.ac.uk
+// Student ID:       S1934603
+//
+///////////////////////////////////////////////////////////////////////////////
 public class RoadWAdapter extends ArrayAdapter<Item> {
 
     private final Context iContext;

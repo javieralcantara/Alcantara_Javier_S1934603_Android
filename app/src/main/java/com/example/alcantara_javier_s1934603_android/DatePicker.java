@@ -10,6 +10,14 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Author:           Javier Alcántara García
+// Email:            jalcan200@caledonian.ac.uk
+// Student ID:       S1934603
+//
+///////////////////////////////////////////////////////////////////////////////
 public class DatePicker extends DialogFragment {
     @NonNull
     @Override

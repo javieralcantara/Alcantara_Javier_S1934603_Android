@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textAlignment="center"
-            android:text="Welcome to Mobile Platform Development Assignment 2021-2022"
+            android:text="[S1934603] Welcome to MPD Assignment 2021-2022"
             />
         <EditText
             android:id="@+id/filter"
@@ -134,7 +134,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dip"
-            android:text="Journey Planner"
+            android:text="[S1934603] Journey Planner"
             android:gravity="center"
             android:layout_gravity="center"
             android:id="@+id/screen1Label"
