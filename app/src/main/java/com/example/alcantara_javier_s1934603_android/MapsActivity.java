@@ -27,11 +27,14 @@ import com.example.alcantara_javier_s1934603_android.databinding.ActivityMapsBin
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -61,7 +64,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, TextWatcher {
 
     // Array of Items
     private ArrayList<Item> incidents = new ArrayList<Item>();
@@ -110,6 +113,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // UI Handler
     private Handler updateUIHandler = null;
 
+    // Edit Text
+    private EditText filterList;
 
     // List View and Custom Array Adapter
     private ListView listView;
@@ -147,7 +152,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewSpinner.setAdapter(adapter);
         viewSpinner.setOnItemSelectedListener(this);
 
-
+        // Find EditText
+        filterList = (EditText) findViewById(R.id.filter);
+        filterList.addTextChangedListener(this);
 
         // Find Buttons
         btShowMap = (Button) findViewById(R.id.showMapButton);
@@ -662,5 +669,44 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             default:
                 break;
         }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        Message message = new Message();
+        ArrayList<Item> aux = new ArrayList<Item>();
+
+        for(int j = 0; j < roadWorks.size(); j++) {
+            Item currentItem = roadWorks.get(j);
+            roadWorks.get(j).setDisplay(currentItem.getTitle().contains(charSequence));
+        }
+        aux = (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
+
+        message.obj = aux;
+        message.what = MESSAGE_UPDATE_RW_LIST;
+        updateUIHandler.sendMessage(message);
+
+        message = new Message();
+
+        for(int j = 0; j < incidents.size(); j++) {
+            Item currentItem = incidents.get(j);
+            incidents.get(j).setDisplay(currentItem.getTitle().contains(charSequence));
+        }
+        aux = (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
+
+        message.obj = aux;
+        message.what = MESSAGE_UPDATE_INC_LIST;
+        updateUIHandler.sendMessage(message);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }

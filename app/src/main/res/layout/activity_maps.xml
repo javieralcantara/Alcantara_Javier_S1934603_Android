@@ -15,6 +15,12 @@
             android:textAlignment="center"
             android:text="Welcome to Mobile Platform Development Assignment 2021-2022"
             />
+        <EditText
+            android:id="@+id/filter"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="Search by road..."
+            android:inputType="text"/>
 
         <ProgressBar
             android:id="@+id/progressBar"
