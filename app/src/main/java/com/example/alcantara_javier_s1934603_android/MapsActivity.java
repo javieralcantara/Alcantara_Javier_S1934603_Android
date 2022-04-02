@@ -4,10 +4,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -39,7 +37,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -56,7 +53,6 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -74,16 +70,16 @@ import java.util.stream.Collectors;
 ///////////////////////////////////////////////////////////////////////////////
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener, DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener, AdapterView.OnItemClickListener, TextWatcher {
 
-    // Array of Items
-    private ArrayList<Item> incidents = new ArrayList<Item>();
-    private ArrayList<Item> roadWorks = new ArrayList<Item>();
+    // Array of roadworks and incidents
+    private final ArrayList<Item> incidents = new ArrayList<Item>();
+    private final ArrayList<Item> roadWorks = new ArrayList<Item>();
 
-    private String roadWorksFeed = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
-    private String plannedRoadWorks = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
-    private String currentIncidents = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
+    private final String roadWorksFeed = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
+    private final String plannedRoadWorks = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
+    private final String currentIncidents = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
 
+    // Spinner
     private Spinner viewSpinner;
-
 
     // Google Maps
     private GoogleMap mMap;
@@ -93,14 +89,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final static int ROAD_WORKS =0;
     private final static int INCIDENTS =1;
 
-    // Message type code.
+    // Message type code
     private final static int MESSAGE_INIT_RW_LIST =0;
     private final static int MESSAGE_INIT_INC_LIST =1;
-    private final static int MESSAGE_UPDATE_PERCENTAGE =4;
-    private final static int MESSAGE_UPDATE_DATE =5;
-    private final static int MESSAGE_UPDATE_DATE_PLANNER =6;
-    private final static int MESSAGE_ADD_MARKER =7;
-    private final static int MESSAGE_CLEAR_MARKERS = 8;
+    private final static int MESSAGE_UPDATE_PERCENTAGE =2;
+    private final static int MESSAGE_UPDATE_DATE =3;
+    private final static int MESSAGE_UPDATE_DATE_PLANNER =4;
+    private final static int MESSAGE_ADD_MARKER =5;
+    private final static int MESSAGE_CLEAR_MARKERS = 6;
 
     // View Switcher
     private ViewSwitcher avw;
@@ -131,7 +127,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Progress Bar
     private ProgressBar progressBar;
 
-    //Declare the timer
+    // Timer
     Timer t = new Timer();
 
     @Override
@@ -144,42 +140,43 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Initialize Handler.
         createUpdateUiHandler();
 
-        // Find ViewSwitcher
-        avw = (ViewSwitcher) findViewById(R.id.vwSwitch);
-        avw2 = (ViewSwitcher) findViewById(R.id.vwSwitch2);
-
-        //Set the schedule function and rate
+        // Set the schedule function and rate
         t.scheduleAtFixedRate(new TimerTask() {
-          @Override
-          public void run() {
-              roadWorks.clear();
-              incidents.clear();
+            @Override
+            public void run() {
+                roadWorks.clear();
+                incidents.clear();
 
-              fetchFeed(roadWorksFeed, ROAD_WORKS, false);
-              fetchFeed(plannedRoadWorks, ROAD_WORKS, true);
-              fetchFeed(currentIncidents, INCIDENTS, false);
-          }
+                fetchFeed(roadWorksFeed, ROAD_WORKS, false);
+                fetchFeed(plannedRoadWorks, ROAD_WORKS, true);
+                fetchFeed(currentIncidents, INCIDENTS, false);
+            }
 
         }, 0, 300000);
 
-        viewSpinner = (Spinner) findViewById(R.id.vSpinner);
+        // Find ViewSwitchers
+        avw = findViewById(R.id.vwSwitch);
+        avw2 = findViewById(R.id.vwSwitch2);
+
+        // Find and Configure Spinner
+        viewSpinner = findViewById(R.id.vSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dataSources, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         viewSpinner.setAdapter(adapter);
         viewSpinner.setOnItemSelectedListener(this);
 
-        // Find EditText
-        filterList = (EditText) findViewById(R.id.filter);
+        // Find and Configure EditText
+        filterList = findViewById(R.id.filter);
         filterList.addTextChangedListener(this);
 
         // Find Buttons
-        btShowMap = (Button) findViewById(R.id.showMapButton);
-        btHideMap = (Button) findViewById(R.id.hideMapButton);
+        btShowMap = findViewById(R.id.showMapButton);
+        btHideMap = findViewById(R.id.hideMapButton);
         btPickDate = findViewById(R.id.pickDButton);
         btClearDate = findViewById(R.id.clearDateButton);
         btPickDatePlanner = findViewById(R.id.pickDPlannerButton);
 
-        // Click listeners
+        // Configure Buttons
         btShowMap.setOnClickListener(this);
         btHideMap.setOnClickListener(this);
         btPickDate.setOnClickListener(this);
@@ -189,25 +186,250 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Find Progress Bar
         progressBar = findViewById(R.id.progressBar);
 
-        // Find ListView
+        // Find ListViews
         listView = findViewById(R.id.listRoadWorks);
         listView2 = findViewById(R.id.listIncidents);
 
-        // ListView Custom ArrayAdapters
-        iAdapter = new RoadWAdapter(MapsActivity.this, roadWorks);
-        iAdapter2 = new IncidentsAdapter(MapsActivity.this, incidents);
-
-        // Set Adapter to ListView
-        listView.setAdapter(iAdapter);
-        listView2.setAdapter(iAdapter2);
-
-        // Listen on Clicking on an Item
+        // Configure ListViews
         listView.setOnItemClickListener(this);
         listView2.setOnItemClickListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    /**
+     * Create Handler object in main thread.
+     * The handleMessage method listens for incoming updates that should change the UI.
+     */
+    private void createUpdateUiHandler()
+    {
+        if(updateUIHandler == null)
+        {
+            updateUIHandler = new Handler(Looper.getMainLooper())
+            {
+                @Override
+                public void handleMessage(Message msg)
+                {
+                    if (msg.what == MESSAGE_INIT_RW_LIST){
+                        iAdapter = new RoadWAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
+                        listView.setAdapter(iAdapter);
+                    } else if (msg.what == MESSAGE_INIT_INC_LIST){
+                        iAdapter2 = new IncidentsAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
+                        listView2.setAdapter(iAdapter2);
+                    } else if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
+                        progressBar.setProgress((int) Math.round((Double) msg.obj));
+                    } else if (msg.what == MESSAGE_UPDATE_DATE) {
+                        btPickDate.setText((String) msg.obj);
+                    } else if (msg.what == MESSAGE_UPDATE_DATE_PLANNER) {
+                        btPickDatePlanner.setText((String) msg.obj);
+                    } else if (msg.what == MESSAGE_ADD_MARKER) {
+                        mMap.addMarker((MarkerOptions) msg.obj);
+                    } else if (msg.what == MESSAGE_CLEAR_MARKERS) {
+                        mMap.clear();
+                    }
+                }
+            };
+        }
+    }
+
+    /**
+     * Parses the data from an XML feed into a Java Class object.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void parseData(String dataToParse, int type)
+    {
+        Item item = new Item();
+        try
+        {
+            String text = "";
+            SimpleDateFormat parser = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz", Locale.UK);
+            SimpleDateFormat descParser = new SimpleDateFormat("EEEE, d MMMM yyyy - HH:mm", Locale.UK);
+
+
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser xpp = factory.newPullParser();
+            xpp.setInput( new StringReader(dataToParse));
+            int eventType = xpp.getEventType();
+
+            while (eventType != XmlPullParser.END_DOCUMENT)
+            {
+                String tagName = xpp.getName();
+
+                switch (eventType)
+                {
+                    case XmlPullParser.START_TAG:
+                        if (tagName.equalsIgnoreCase("item"))
+                        {
+                            item = new Item();
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        text = xpp.getText();
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if (tagName.equalsIgnoreCase("item"))
+                        {
+                            if (type == ROAD_WORKS) {
+                                roadWorks.add(item);
+                            } else if (type == INCIDENTS) {
+                                incidents.add(item);
+                            }
+                        }
+                        else if (tagName.equalsIgnoreCase("title"))
+                        {
+                            item.setTitle(text);
+                        }
+                        else if (tagName.equalsIgnoreCase("description"))
+                        {
+                            item.setDescription(text);
+                            if (text.contains("Start Date:") && text.contains("End Date:")) {
+                                String[] split = text.split("<br />");
+                                item.setStartDate(descParser.parse(split[0].substring(12)));
+                                item.setEndDate(descParser.parse(split[1].substring(10)));
+                            }
+                        }
+                        else if (tagName.equalsIgnoreCase("link"))
+                        {
+                            item.setLink(new URL(text));
+                        }
+                        else if (tagName.equalsIgnoreCase("point"))
+                        {
+                            String[] values = text.split(" ");
+                            item.setLatitude(Float.parseFloat(values[0]));
+                            item.setLongitude(Float.parseFloat(values[1]));
+
+                        }
+                        else if (tagName.equalsIgnoreCase("pubDate"))
+                        {
+                            item.setDate(parser.parse(text));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                eventType = xpp.next();
+            }
+        } catch (XmlPullParserException | ParseException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates a separate Thread to do some work that may be time consuming. It fetches an XML feed
+     * from a given URL, it then parses the data into a Java Class object and then updates the UI using
+     * a Handler.
+     */
+    private void fetchFeed(String url, int type, boolean showProgress)
+    {
+        Thread workerThread = new Thread()
+        {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void run()
+            {
+                String result = "";
+                URL aurl;
+                URLConnection yc;
+                BufferedReader in = null;
+                String inputLine = "";
+                double percent = 0.0;
+                long readLength = 0;
+                Message message = new Message();
+
+                try
+                {
+                    aurl = new URL(url);
+                    yc = aurl.openConnection();
+                    percent = 100.0 / yc.getContentLength();
+                    in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+
+                    // Now read the data. Make sure that there are no specific hedrs
+                    // in the data file that you need to ignore.
+                    // The useful data that you need is in each of the item entries
+                    result = "";
+                    while ((inputLine = in.readLine()) != null)
+                    {
+                        result = result + inputLine;
+                        readLength += inputLine.length();
+
+                        long finalReadLength = readLength;
+
+                        if (showProgress) {
+                            // Set message type.
+                            message = new Message();
+                            message.what = MESSAGE_UPDATE_PERCENTAGE;
+                            message.obj = percent * finalReadLength;
+                            // Send message to main thread Handler.
+                            updateUIHandler.sendMessage(message);
+                        }
+                    }
+                    in.close();
+
+                    parseData(result, type);
+
+                    if (showProgress) {
+                        message = new Message();
+                        message.what = MESSAGE_UPDATE_PERCENTAGE;
+                        message.obj = 100.0;
+                        // Send message to main thread Handler.
+                        updateUIHandler.sendMessage(message);
+                    }
+
+
+                }
+                catch (IOException io)
+                {
+                    Log.e("MyTag", "ioexception in run");
+                }
+
+
+                // Set message type.
+                message = new Message();
+                if (type == ROAD_WORKS) {
+                    message.what = MESSAGE_INIT_RW_LIST;
+                    message.obj = roadWorks;
+                } else if (type == INCIDENTS) {
+                    message.what = MESSAGE_INIT_INC_LIST;
+                    message.obj = incidents;
+                }
+
+                // Send message to main thread Handler.
+                updateUIHandler.sendMessage(message);
+            }
+        };
+        workerThread.start();
+    }
+
+    /**
+     * Helper function that filers roadWorks by Date
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    ArrayList<Item> filterRoadWorksByDate(Date date) {
+        for(int i = 0; i < roadWorks.size(); i++) {
+            Item currentItem = roadWorks.get(i);
+            roadWorks.get(i).setDisplay(date.after(currentItem.getStartDate()) && date.before(currentItem.getEndDate()) && currentItem.getTitle().contains(filterList.getText()));
+        }
+
+        return (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
+    }
+
+    /**
+     * Helper function that filers incidents by Date. Since an incident does not
+     * have a start and end date, it looks to filter if the selected date matches the
+     * publication date of the incident
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    ArrayList<Item> filterIncidentsByDate(int year, int month, int dayOfMonth) {
+        for(int i = 0; i < incidents.size(); i++) {
+            Item currentItem = incidents.get(i);
+            ArrayList<Integer> itemYearMonthDay = currentItem.getYearMonthDay();
+            incidents.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth && currentItem.getTitle().contains(filterList.getText()));
+        }
+
+        return (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
     }
 
     /**
@@ -297,230 +519,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * Create Handler object in main thread.
-     * The handleMessage method listens for incoming updates that should change the UI.
-     */
-    private void createUpdateUiHandler()
-    {
-        if(updateUIHandler == null)
-        {
-            updateUIHandler = new Handler(Looper.getMainLooper())
-            {
-                @Override
-                public void handleMessage(Message msg)
-                {
-                    if (msg.what == MESSAGE_INIT_RW_LIST){
-                        iAdapter = new RoadWAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
-                        listView.setAdapter(iAdapter);
-                    } else if (msg.what == MESSAGE_INIT_INC_LIST){
-                        iAdapter2 = new IncidentsAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
-                        listView2.setAdapter(iAdapter2);
-                    } else if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
-                        progressBar.setProgress((int) Math.round((Double) msg.obj));
-                    } else if (msg.what == MESSAGE_UPDATE_DATE) {
-                        btPickDate.setText((String) msg.obj);
-                    } else if (msg.what == MESSAGE_UPDATE_DATE_PLANNER) {
-                        btPickDatePlanner.setText((String) msg.obj);
-                    } else if (msg.what == MESSAGE_ADD_MARKER) {
-                        mMap.addMarker((MarkerOptions) msg.obj);
-                    } else if (msg.what == MESSAGE_CLEAR_MARKERS) {
-                        mMap.clear();
-                    }
-                }
-            };
-        }
-    }
-
-    /**
-     * Parses the data from a XML feed into a Java Class object.
-     */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void parseData(String dataToParse, int type)
-    {
-        Item item = new Item();
-        try
-        {
-            String text = "";
-            SimpleDateFormat parser = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss zzz", Locale.UK);
-            SimpleDateFormat descParser = new SimpleDateFormat("EEEE, d MMMM yyyy - HH:mm", Locale.UK);
-
-
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(true);
-            XmlPullParser xpp = factory.newPullParser();
-            xpp.setInput( new StringReader(dataToParse));
-            int eventType = xpp.getEventType();
-
-            while (eventType != XmlPullParser.END_DOCUMENT)
-            {
-                String tagName = xpp.getName();
-
-                switch (eventType)
-                {
-                    case XmlPullParser.START_TAG:
-                        if (tagName.equalsIgnoreCase("item"))
-                        {
-                            item = new Item();
-                        }
-                        break;
-                    case XmlPullParser.TEXT:
-                        text = xpp.getText();
-                        break;
-                    case XmlPullParser.END_TAG:
-                        if (tagName.equalsIgnoreCase("item"))
-                        {
-                            if (type == ROAD_WORKS) {
-                                roadWorks.add(item);
-                            } else if (type == INCIDENTS) {
-                                incidents.add(item);
-                            }
-                        }
-                        else if (tagName.equalsIgnoreCase("title"))
-                        {
-                            item.setTitle(text);
-                        }
-                        else if (tagName.equalsIgnoreCase("description"))
-                        {
-                            item.setDescription(text);
-                            if (text.contains("Start Date:") && text.contains("End Date:")) {
-                                String[] split = text.split("<br />");
-                                item.setStartDate(descParser.parse(split[0].substring(12)));
-                                item.setEndDate(descParser.parse(split[1].substring(10)));
-                            }
-                        }
-                        else if (tagName.equalsIgnoreCase("link"))
-                        {
-                            item.setLink(new URL(text));
-                        }
-                        else if (tagName.equalsIgnoreCase("point"))
-                        {
-                            String[] values = text.split(" ");
-                            item.setLatitude(Float.parseFloat(values[0]));
-                            item.setLongitude(Float.parseFloat(values[1]));
-
-                        }
-                        else if (tagName.equalsIgnoreCase("pubDate"))
-                        {
-                            item.setDate(parser.parse(text));
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                eventType = xpp.next();
-            }
-        } catch (XmlPullParserException | ParseException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Creates a separate Thread to do some work that may be time consuming.
-     */
-    private void fetchFeed(String url, int type, boolean showProgress)
-    {
-        Thread workerThread = new Thread()
-        {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void run()
-            {
-            String result = "";
-            URL aurl;
-            URLConnection yc;
-            BufferedReader in = null;
-            String inputLine = "";
-            double percent = 0.0;
-            long readLength = 0;
-            Message message = new Message();
-
-                try
-            {
-                aurl = new URL(url);
-                yc = aurl.openConnection();
-                percent = 100.0 / yc.getContentLength();
-                in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
-
-                // Now read the data. Make sure that there are no specific hedrs
-                // in the data file that you need to ignore.
-                // The useful data that you need is in each of the item entries
-                result = "";
-                while ((inputLine = in.readLine()) != null)
-                {
-                    result = result + inputLine;
-                    readLength += inputLine.length();
-
-                    long finalReadLength = readLength;
-
-                    if (showProgress) {
-                        // Set message type.
-                        message = new Message();
-                        message.what = MESSAGE_UPDATE_PERCENTAGE;
-                        message.obj = percent * finalReadLength;
-                        // Send message to main thread Handler.
-                        updateUIHandler.sendMessage(message);
-                    }
-                }
-                in.close();
-
-                parseData(result, type);
-
-                if (showProgress) {
-                    message = new Message();
-                    message.what = MESSAGE_UPDATE_PERCENTAGE;
-                    message.obj = 100.0;
-                    // Send message to main thread Handler.
-                    updateUIHandler.sendMessage(message);
-                }
-
-
-            }
-            catch (IOException io)
-            {
-                Log.e("MyTag", "ioexception in run");
-            }
-
-
-            // Set message type.
-            message = new Message();
-            if (type == ROAD_WORKS) {
-                message.what = MESSAGE_INIT_RW_LIST;
-                message.obj = roadWorks;
-            } else if (type == INCIDENTS) {
-                message.what = MESSAGE_INIT_INC_LIST;
-                message.obj = incidents;
-            }
-
-            // Send message to main thread Handler.
-            updateUIHandler.sendMessage(message);
-            }
-        };
-        workerThread.start();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    ArrayList<Item> filterRoadWorksByDate(Date date) {
-        for(int i = 0; i < roadWorks.size(); i++) {
-            Item currentItem = roadWorks.get(i);
-            roadWorks.get(i).setDisplay(date.after(currentItem.getStartDate()) && date.before(currentItem.getEndDate()) && currentItem.getTitle().contains(filterList.getText()));
-        }
-
-        return (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    ArrayList<Item> filterIncidentsByDate(int year, int month, int dayOfMonth) {
-        for(int i = 0; i < incidents.size(); i++) {
-            Item currentItem = incidents.get(i);
-            ArrayList<Integer> itemYearMonthDay = currentItem.getYearMonthDay();
-            incidents.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth && currentItem.getTitle().contains(filterList.getText()));
-        }
-
-        return (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
-    }
-
-    /**
-     * When a date is choosing in the DatePicker, this method triggers.
+     * When a date is chosen in the DatePicker, this method triggers.
      * Since there are 2 DatePickers, each one has a different tag - it makes it easy
      * to recognize which action to do depending on the tag.
      */
@@ -601,6 +600,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    /**
+     * When an item is selected from the spinner, this method is called.
+     * In conjunction with the secondary ViewSwitcher, it toggles between both
+     * listviews (roadWorks and incidents)
+     */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String text = (String)viewSpinner.getSelectedItem();
@@ -613,27 +617,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
-    private void showtbDialog(Item item)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(item.getTitle() + item.getDescription());
-        builder.setCancelable(false);
-        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id)
-            {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    private void showcustomDialog(Item item)
+    /**
+     * This method opens up a dialog that displays information for an item
+     */
+    private void showCustomDialog(Item item)
     {
         // Custom dialog setup
         final Dialog dialog = new Dialog(this);
@@ -641,11 +628,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialog.setTitle("Custom Dialog Example");
 
         // Set the custom dialog components as a TextView and Button component
-        TextView title = (TextView) dialog.findViewById(R.id.title);
-        TextView description = (TextView) dialog.findViewById(R.id.description);
-        TextView date = (TextView) dialog.findViewById(R.id.date);
+        TextView title = dialog.findViewById(R.id.title);
+        TextView description = dialog.findViewById(R.id.description);
+        TextView date = dialog.findViewById(R.id.date);
 
-        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+        Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
 
         title.setText(item.getTitle());
         description.setText(item.getDescription());
@@ -664,25 +651,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dialog.show();
     }
 
+    /**
+     * When an item is selected from a listview, this method is trigger.
+     * Since there are 2 ListViews, each one is identified separately (roadWorks and incidents)
+     */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         switch (adapterView.getId()) {
             case R.id.listRoadWorks:
-                showcustomDialog(roadWorks.get(i));
+                showCustomDialog(roadWorks.get(i));
                 break;
             case R.id.listIncidents:
-                showcustomDialog(incidents.get(i));
+                showCustomDialog(incidents.get(i));
                 break;
             default:
                 break;
         }
     }
 
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-    }
-
+    /**
+     * Whenever text is typed into the EditText field, this method is called.
+     * It filters both roadWorks and incidents by the inputted text
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -693,7 +683,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             roadWorks.get(j).setDisplay(currentItem.getTitle().contains(charSequence));
         }
 
-        message.obj = (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
+        message.obj = roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
         message.what = MESSAGE_INIT_RW_LIST;
         updateUIHandler.sendMessage(message);
 
@@ -704,9 +694,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             incidents.get(j).setDisplay(currentItem.getTitle().contains(charSequence));
         }
 
-        message.obj = (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
+        message.obj = incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
         message.what = MESSAGE_INIT_INC_LIST;
         updateUIHandler.sendMessage(message);
+    }
+
+
+
+    /**
+     * Unused default methods from various implementations
+     */
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
     }
 
     @Override
