@@ -52,7 +52,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Date;
+import java.util.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,6 +61,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -94,8 +96,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Message type code.
     private final static int MESSAGE_INIT_RW_LIST =0;
     private final static int MESSAGE_INIT_INC_LIST =1;
-    private final static int MESSAGE_UPDATE_RW_LIST =2;
-    private final static int MESSAGE_UPDATE_INC_LIST =3;
     private final static int MESSAGE_UPDATE_PERCENTAGE =4;
     private final static int MESSAGE_UPDATE_DATE =5;
     private final static int MESSAGE_UPDATE_DATE_PLANNER =6;
@@ -128,10 +128,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private RoadWAdapter iAdapter;
     private IncidentsAdapter iAdapter2;
 
-
-
     // Progress Bar
     private ProgressBar progressBar;
+
+    //Declare the timer
+    Timer t = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,10 +148,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         avw = (ViewSwitcher) findViewById(R.id.vwSwitch);
         avw2 = (ViewSwitcher) findViewById(R.id.vwSwitch2);
 
+        //Set the schedule function and rate
+        t.scheduleAtFixedRate(new TimerTask() {
+          @Override
+          public void run() {
+              roadWorks.clear();
+              incidents.clear();
 
-        fetchFeed(roadWorksFeed, ROAD_WORKS, false);
-        fetchFeed(plannedRoadWorks, ROAD_WORKS, true);
-        fetchFeed(currentIncidents, INCIDENTS, false);
+              fetchFeed(roadWorksFeed, ROAD_WORKS, false);
+              fetchFeed(plannedRoadWorks, ROAD_WORKS, true);
+              fetchFeed(currentIncidents, INCIDENTS, false);
+          }
+
+        }, 0, 300000);
 
         viewSpinner = (Spinner) findViewById(R.id.vSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.dataSources, android.R.layout.simple_spinner_item);
@@ -256,7 +266,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // Set message type.
                 message = new Message();
-                message.what = MESSAGE_UPDATE_RW_LIST;
+                message.what = MESSAGE_INIT_RW_LIST;
                 message.obj = roadWorks;
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
@@ -267,7 +277,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // Set message type.
                 message = new Message();
-                message.what = MESSAGE_UPDATE_INC_LIST;
+                message.what = MESSAGE_INIT_INC_LIST;
                 message.obj = incidents;
                 // Send message to main thread Handler.
                 updateUIHandler.sendMessage(message);
@@ -300,13 +310,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 public void handleMessage(Message msg)
                 {
                     if (msg.what == MESSAGE_INIT_RW_LIST){
-                        iAdapter.addAll((ArrayList<Item>) msg.obj);
-                    } else if (msg.what == MESSAGE_INIT_INC_LIST){
-                        iAdapter2.addAll((ArrayList<Item>) msg.obj);
-                    } else if (msg.what == MESSAGE_UPDATE_RW_LIST){
                         iAdapter = new RoadWAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
                         listView.setAdapter(iAdapter);
-                    } else if (msg.what == MESSAGE_UPDATE_INC_LIST){
+                    } else if (msg.what == MESSAGE_INIT_INC_LIST){
                         iAdapter2 = new IncidentsAdapter(MapsActivity.this, (ArrayList<Item>) msg.obj);
                         listView2.setAdapter(iAdapter2);
                     } else if (msg.what == MESSAGE_UPDATE_PERCENTAGE) {
@@ -345,14 +351,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             xpp.setInput( new StringReader(dataToParse));
             int eventType = xpp.getEventType();
 
-            // Clean item list first
-            /* if (type == ROAD_WORKS) {
-                roadWorks.clear();
-            } else if (type == INCIDENTS) {
-                // items.add(item);
-                incidents.clear();
-            }*/
-
             while (eventType != XmlPullParser.END_DOCUMENT)
             {
                 String tagName = xpp.getName();
@@ -372,10 +370,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (tagName.equalsIgnoreCase("item"))
                         {
                             if (type == ROAD_WORKS) {
-                                // items.add(item);
                                 roadWorks.add(item);
                             } else if (type == INCIDENTS) {
-                                // items.add(item);
                                 incidents.add(item);
                             }
                         }
@@ -413,8 +409,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 eventType = xpp.next();
             }
-            // roadWorks.sort((r1, r2) -> r1.getDate().before(r2.getDate())  ? 1 : 0);
-            // incidents.sort((r1, r2) -> r1.getDate().before(r2.getDate())  ? 1 : 0);
         } catch (XmlPullParserException | ParseException | IOException e) {
             e.printStackTrace();
         }
@@ -431,76 +425,98 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void run()
             {
-                String result = "";
-                URL aurl;
-                URLConnection yc;
-                BufferedReader in = null;
-                String inputLine = "";
-                double percent = 0.0;
-                long readLength = 0;
-                Message message = new Message();
+            String result = "";
+            URL aurl;
+            URLConnection yc;
+            BufferedReader in = null;
+            String inputLine = "";
+            double percent = 0.0;
+            long readLength = 0;
+            Message message = new Message();
 
                 try
+            {
+                aurl = new URL(url);
+                yc = aurl.openConnection();
+                percent = 100.0 / yc.getContentLength();
+                in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+
+                // Now read the data. Make sure that there are no specific hedrs
+                // in the data file that you need to ignore.
+                // The useful data that you need is in each of the item entries
+                result = "";
+                while ((inputLine = in.readLine()) != null)
                 {
-                    aurl = new URL(url);
-                    yc = aurl.openConnection();
-                    percent = 100.0 / yc.getContentLength();
-                    in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+                    result = result + inputLine;
+                    readLength += inputLine.length();
 
-                    // Now read the data. Make sure that there are no specific hedrs
-                    // in the data file that you need to ignore.
-                    // The useful data that you need is in each of the item entries
-                    result = "";
-                    while ((inputLine = in.readLine()) != null)
-                    {
-                        result = result + inputLine;
-                        readLength += inputLine.length();
-
-                        long finalReadLength = readLength;
-
-                        if (showProgress) {
-                            // Set message type.
-                            message = new Message();
-                            message.what = MESSAGE_UPDATE_PERCENTAGE;
-                            message.obj = percent * finalReadLength;
-                            // Send message to main thread Handler.
-                            updateUIHandler.sendMessage(message);
-                        }
-                    }
-                    in.close();
-
-                    parseData(result, type);
+                    long finalReadLength = readLength;
 
                     if (showProgress) {
+                        // Set message type.
                         message = new Message();
                         message.what = MESSAGE_UPDATE_PERCENTAGE;
-                        message.obj = 100.0;
+                        message.obj = percent * finalReadLength;
                         // Send message to main thread Handler.
                         updateUIHandler.sendMessage(message);
                     }
-
-
                 }
-                catch (IOException io)
-                {
-                    Log.e("MyTag", "ioexception in run");
+                in.close();
+
+                parseData(result, type);
+
+                if (showProgress) {
+                    message = new Message();
+                    message.what = MESSAGE_UPDATE_PERCENTAGE;
+                    message.obj = 100.0;
+                    // Send message to main thread Handler.
+                    updateUIHandler.sendMessage(message);
                 }
 
 
-                // Set message type.
-                message = new Message();
-                if (type == ROAD_WORKS) {
-                    message.what = MESSAGE_INIT_RW_LIST;
-                    message.obj = roadWorks;
-                } else if (type == INCIDENTS) {
-                    message.what = MESSAGE_INIT_INC_LIST;
-                    message.obj = incidents;
-                }
-                // Send message to main thread Handler.
-                updateUIHandler.sendMessage(message);
+            }
+            catch (IOException io)
+            {
+                Log.e("MyTag", "ioexception in run");
+            }
+
+
+            // Set message type.
+            message = new Message();
+            if (type == ROAD_WORKS) {
+                message.what = MESSAGE_INIT_RW_LIST;
+                message.obj = roadWorks;
+            } else if (type == INCIDENTS) {
+                message.what = MESSAGE_INIT_INC_LIST;
+                message.obj = incidents;
+            }
+
+            // Send message to main thread Handler.
+            updateUIHandler.sendMessage(message);
             }
         };
         workerThread.start();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    ArrayList<Item> filterRoadWorksByDate(Date date) {
+        for(int i = 0; i < roadWorks.size(); i++) {
+            Item currentItem = roadWorks.get(i);
+            roadWorks.get(i).setDisplay(date.after(currentItem.getStartDate()) && date.before(currentItem.getEndDate()) && currentItem.getTitle().contains(filterList.getText()));
+        }
+
+        return (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    ArrayList<Item> filterIncidentsByDate(int year, int month, int dayOfMonth) {
+        for(int i = 0; i < incidents.size(); i++) {
+            Item currentItem = incidents.get(i);
+            ArrayList<Integer> itemYearMonthDay = currentItem.getYearMonthDay();
+            incidents.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth && currentItem.getTitle().contains(filterList.getText()));
+        }
+
+        return (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
     }
 
     /**
@@ -520,7 +536,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         switch (Objects.requireNonNull(mDatePickerDialogFragment.getTag())) {
             case "DATE PICK":
-                ArrayList<Item> aux = new ArrayList<>();
                 message.what = MESSAGE_UPDATE_DATE;
                 message.obj = selectedDate;
                 // Send message to main thread Handler.
@@ -528,28 +543,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 message = new Message();
 
-                for(int i = 0; i < roadWorks.size(); i++) {
-                    Item currentItem = roadWorks.get(i);
-                    roadWorks.get(i).setDisplay(mCalendar.getTime().after(currentItem.getStartDate()) && mCalendar.getTime().before(currentItem.getEndDate()));
-                }
-
-                aux = (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
-
-                message.obj = aux;
-                message.what = MESSAGE_UPDATE_RW_LIST;
+                message.obj = filterRoadWorksByDate(mCalendar.getTime());
+                message.what = MESSAGE_INIT_RW_LIST;
                 updateUIHandler.sendMessage(message);
 
                 message = new Message();
 
-                for(int i = 0; i < incidents.size(); i++) {
-                    ArrayList<Integer> itemYearMonthDay = incidents.get(i).getYearMonthDay();
-                    incidents.get(i).setDisplay(itemYearMonthDay.get(0) == year && itemYearMonthDay.get(1) == month && itemYearMonthDay.get(2) == dayOfMonth);
-                }
-
-                aux = (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
-
-                message.obj = aux;
-                message.what = MESSAGE_UPDATE_INC_LIST;
+                message.obj = filterIncidentsByDate(year, month, dayOfMonth);
+                message.what = MESSAGE_INIT_INC_LIST;
                 updateUIHandler.sendMessage(message);
 
                 break;
@@ -686,16 +687,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         Message message = new Message();
-        ArrayList<Item> aux = new ArrayList<Item>();
 
         for(int j = 0; j < roadWorks.size(); j++) {
             Item currentItem = roadWorks.get(j);
             roadWorks.get(j).setDisplay(currentItem.getTitle().contains(charSequence));
         }
-        aux = (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
 
-        message.obj = aux;
-        message.what = MESSAGE_UPDATE_RW_LIST;
+        message.obj = (ArrayList<Item>) roadWorks.stream().filter(Item::isDisplay).collect(Collectors.toList());
+        message.what = MESSAGE_INIT_RW_LIST;
         updateUIHandler.sendMessage(message);
 
         message = new Message();
@@ -704,10 +703,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Item currentItem = incidents.get(j);
             incidents.get(j).setDisplay(currentItem.getTitle().contains(charSequence));
         }
-        aux = (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
 
-        message.obj = aux;
-        message.what = MESSAGE_UPDATE_INC_LIST;
+        message.obj = (ArrayList<Item>) incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
+        message.what = MESSAGE_INIT_INC_LIST;
         updateUIHandler.sendMessage(message);
     }
 
