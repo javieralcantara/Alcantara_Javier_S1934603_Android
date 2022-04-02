@@ -618,25 +618,63 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**
-     * This method opens up a dialog that displays information for an item
+     * This method opens up a dialog that displays information for a roadwork
      */
-    private void showCustomDialog(Item item)
+    private void showRoadWorkDialog(Item item)
     {
         // Custom dialog setup
         final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.item_dialog);
-        dialog.setTitle("Custom Dialog Example");
+        dialog.setContentView(R.layout.roadwork_dialog);
+        dialog.setTitle("Traffic Scotland Data");
+
+        // Set the custom dialog components as a TextView and Button component
+        TextView title = dialog.findViewById(R.id.title);
+        TextView startDate = dialog.findViewById(R.id.startDate);
+        TextView endDate = dialog.findViewById(R.id.endDate);
+        TextView additionalInfo = dialog.findViewById(R.id.additionalInfo);
+
+        Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
+
+        title.setText(item.getTitle());
+        startDate.setText(String.format("Start date: %s", item.getParsedStartDate()));
+        endDate.setText(String.format("End date: %s", item.getParsedEndDate()));
+        additionalInfo.setText(String.format("Additional info: %s", item.getLink()));
+
+        dialogButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dialog.dismiss();
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * This method opens up a dialog that displays information for an incident
+     */
+    private void showIncidentDialog(Item item)
+    {
+        // Custom dialog setup
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.incident_dialog);
+        dialog.setTitle("Traffic Scotland Data");
 
         // Set the custom dialog components as a TextView and Button component
         TextView title = dialog.findViewById(R.id.title);
         TextView description = dialog.findViewById(R.id.description);
         TextView date = dialog.findViewById(R.id.date);
+        TextView additionalInfo = dialog.findViewById(R.id.additionalInfo);
 
         Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
 
         title.setText(item.getTitle());
         description.setText(item.getDescription());
         date.setText(String.format("Start date: %s", item.getParsedDate()));
+        additionalInfo.setText(String.format("Additional info: %s", item.getLink()));
 
         dialogButton.setOnClickListener(new View.OnClickListener()
         {
@@ -659,10 +697,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         switch (adapterView.getId()) {
             case R.id.listRoadWorks:
-                showCustomDialog(roadWorks.get(i));
+                showRoadWorkDialog(roadWorks.get(i));
                 break;
             case R.id.listIncidents:
-                showCustomDialog(incidents.get(i));
+                showIncidentDialog(incidents.get(i));
                 break;
             default:
                 break;

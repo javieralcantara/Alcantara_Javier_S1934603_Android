@@ -100,7 +100,7 @@ public class Item {
     }
 
     public String getParsedDate() {
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy");
 
         return df.format(date);
     }

@@ -50,12 +50,6 @@ public class RoadWAdapter extends ArrayAdapter<Item> {
         TextView title = (TextView) listItem.findViewById(R.id.title);
         title.setText(currentItem.getTitle());
 
-        // TextView description = (TextView) listItem.findViewById(R.id.description);
-        // description.setText(currentItem.getDescription());
-
-        TextView date = (TextView) listItem.findViewById(R.id.date);
-        date.setText(currentItem.getParsedDate());
-
         TextView startDate = (TextView) listItem.findViewById(R.id.startDate);
         startDate.setText(String.format("Start Date: %s", currentItem.getParsedStartDate()));
 
@@ -64,7 +58,6 @@ public class RoadWAdapter extends ArrayAdapter<Item> {
 
         LocalDate localStart = currentItem.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate localEnd = currentItem.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
 
         long daysBetween = ChronoUnit.DAYS.between(localStart, localEnd);
 
@@ -79,22 +72,6 @@ public class RoadWAdapter extends ArrayAdapter<Item> {
             duration.setTextColor(Color.rgb(0,100,0));
         } else {
             duration.setTextColor(Color.BLUE);
-        }
-
-        Instant now = Instant.now();
-
-        Instant sixMonthAgo = now.minus(180, ChronoUnit.DAYS);
-        Instant oneMonthAgo = now.minus(30, ChronoUnit.DAYS);
-
-
-        if(currentItem.getDate().before(Date.from(sixMonthAgo))) {
-            date.setTextColor(Color.RED);
-        } else if (currentItem.getDate().before(Date.from(oneMonthAgo))) {
-            date.setTextColor(Color.rgb(255,140,0));
-        } else if (currentItem.getStartDate().after(Date.from(now))) {
-            date.setTextColor(Color.BLUE);
-        } else {
-            date.setTextColor(Color.rgb(0,100,0));
         }
 
         return listItem;

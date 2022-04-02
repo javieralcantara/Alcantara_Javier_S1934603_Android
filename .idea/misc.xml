@@ -8,7 +8,8 @@
         <entry key="app/src/main/res/layout/incident.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/item.xml" value="0.16893115942028986" />
         <entry key="app/src/main/res/layout/item_dialog.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/roadwork.xml" value="0.6134868421052632" />
+        <entry key="app/src/main/res/layout/roadwork.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/roadwork_dialog.xml" value="0.13385416666666666" />
         <entry key="app/src/main/res/layout/toolbar.xml" value="0.15520833333333334" />
       </map>
     </option>
