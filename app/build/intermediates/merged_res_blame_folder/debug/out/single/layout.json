@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/activity_maps.xml",
+        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/activity_maps.xml"
+    },
+    {
+        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/roadwork_dialog.xml",
+        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/roadwork_dialog.xml"
+    },
+    {
+        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/incident.xml",
+        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/incident.xml"
+    },
+    {
+        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/incident_dialog.xml",
+        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/incident_dialog.xml"
+    },
+    {
+        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/roadwork.xml",
+        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/roadwork.xml"
+    }
+]
