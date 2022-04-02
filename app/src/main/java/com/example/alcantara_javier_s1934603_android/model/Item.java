@@ -9,6 +9,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Author:           Javier Alcántara García
+// Email:            jalcan200@caledonian.ac.uk
+// Student ID:       S1934603
+//
+///////////////////////////////////////////////////////////////////////////////
 public class Item {
     private String title;
     private String description;
@@ -16,6 +23,8 @@ public class Item {
     private Float latitude;
     private Float longitude;
     private Date date;
+    private Date startDate;
+    private Date endDate;
     // When filter by date, if not found set to false
     private boolean display;
 
@@ -91,7 +100,7 @@ public class Item {
     }
 
     public String getParsedDate() {
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy");
 
         return df.format(date);
     }
@@ -106,5 +115,33 @@ public class Item {
 
     public void setDisplay(boolean display) {
         this.display = display;
+    }
+
+    public String getParsedStartDate() {
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy");
+
+        return df.format(startDate);
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getParsedEndDate() {
+        DateFormat df = new SimpleDateFormat("EEEE, d MMMM yyyy");
+
+        return df.format(endDate);
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

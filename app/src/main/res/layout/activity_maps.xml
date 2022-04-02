@@ -13,8 +13,14 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textAlignment="center"
-            android:text="Welcome to Mobile Platform Development Assignment 2021-2022"
+            android:text="[S1934603] Welcome to MPD Assignment 2021-2022"
             />
+        <EditText
+            android:id="@+id/filter"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:hint="Search by road..."
+            android:inputType="text"/>
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -54,8 +60,14 @@
                 android:text="Clear"
                 />
         </LinearLayout>
+        <Spinner
+            android:id="@+id/vSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            />
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -86,7 +98,7 @@
                 android:layout_margin="2dp"
                 android:text="Incidents"
                 />
-        </LinearLayout>
+        </LinearLayout>-->
         <TextView
             android:id="@+id/acknowledgement"
             android:layout_width="fill_parent"
@@ -95,12 +107,23 @@
             android:textAlignment="center"
             android:text="Contains Traffic Scotland Data"
             />
-        <ListView
-            android:id="@+id/list"
+        <ViewSwitcher
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:dividerHeight="1dp"
-            />
+            android:layout_height="fill_parent"
+            android:id="@+id/vwSwitch2" >
+            <ListView
+                android:id="@+id/listRoadWorks"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:dividerHeight="1dp"
+                />
+            <ListView
+                android:id="@+id/listIncidents"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:dividerHeight="1dp"
+                />
+        </ViewSwitcher>
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -111,7 +134,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dip"
-            android:text="Journey Planner"
+            android:text="[S1934603] Journey Planner"
             android:gravity="center"
             android:layout_gravity="center"
             android:id="@+id/screen1Label"
