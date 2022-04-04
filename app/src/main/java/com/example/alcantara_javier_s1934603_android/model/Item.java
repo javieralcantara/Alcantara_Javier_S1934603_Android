@@ -25,7 +25,7 @@ public class Item {
     private Date date;
     private Date startDate;
     private Date endDate;
-    // When filter by date, if not found set to false
+    // When filter by date or road, if not found set to false
     private boolean display;
 
     public Item(){

@@ -30,12 +30,6 @@ public class IncidentsAdapter extends ArrayAdapter<Item> {
         itemsList = list;
     }
 
-    public void updateItems(ArrayList<Item> newList) {
-        itemsList.clear();
-        itemsList.addAll(newList);
-        this.notifyDataSetChanged();
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View listItem = convertView;
