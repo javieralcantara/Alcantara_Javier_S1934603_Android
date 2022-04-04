@@ -284,9 +284,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         else if (tagName.equalsIgnoreCase("description"))
                         {
-                            item.setDescription(text);
+                            String[] split = text.split("<br />");
+                            StringBuilder builder = new StringBuilder();
+
+                            for (int i = 0; i < split.length; i++) {
+                                builder.append(split[i]).append(i < split.length - 1 ? ", " : " ");
+                            }
+
+                            item.setDescription(builder.toString());
+
+                            // Add start and end date if the description has such information
                             if (text.contains("Start Date:") && text.contains("End Date:")) {
-                                String[] split = text.split("<br />");
                                 item.setStartDate(descParser.parse(split[0].substring(12)));
                                 item.setEndDate(descParser.parse(split[1].substring(10)));
                             }
@@ -629,15 +637,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Set the custom dialog components as a TextView and Button component
         TextView title = dialog.findViewById(R.id.title);
-        TextView startDate = dialog.findViewById(R.id.startDate);
-        TextView endDate = dialog.findViewById(R.id.endDate);
+        TextView description = dialog.findViewById(R.id.description);
         TextView additionalInfo = dialog.findViewById(R.id.additionalInfo);
 
         Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
 
         title.setText(item.getTitle());
-        startDate.setText(String.format("Start date: %s", item.getParsedStartDate()));
-        endDate.setText(String.format("End date: %s", item.getParsedEndDate()));
+        description.setText(item.getDescription());
         additionalInfo.setText(String.format("Additional info: %s", item.getLink()));
 
         dialogButton.setOnClickListener(new View.OnClickListener()

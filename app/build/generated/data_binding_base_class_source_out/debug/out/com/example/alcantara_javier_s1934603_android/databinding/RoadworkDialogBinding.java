@@ -24,29 +24,25 @@ public final class RoadworkDialogBinding implements ViewBinding {
   public final TextView additionalInfo;
 
   @NonNull
+  public final TextView description;
+
+  @NonNull
   public final Button dialogButtonOK;
 
   @NonNull
   public final LinearLayout dialogInfo;
 
   @NonNull
-  public final TextView endDate;
-
-  @NonNull
-  public final TextView startDate;
-
-  @NonNull
   public final TextView title;
 
   private RoadworkDialogBinding(@NonNull LinearLayout rootView, @NonNull TextView additionalInfo,
-      @NonNull Button dialogButtonOK, @NonNull LinearLayout dialogInfo, @NonNull TextView endDate,
-      @NonNull TextView startDate, @NonNull TextView title) {
+      @NonNull TextView description, @NonNull Button dialogButtonOK,
+      @NonNull LinearLayout dialogInfo, @NonNull TextView title) {
     this.rootView = rootView;
     this.additionalInfo = additionalInfo;
+    this.description = description;
     this.dialogButtonOK = dialogButtonOK;
     this.dialogInfo = dialogInfo;
-    this.endDate = endDate;
-    this.startDate = startDate;
     this.title = title;
   }
 
@@ -83,6 +79,12 @@ public final class RoadworkDialogBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.description;
+      TextView description = ViewBindings.findChildViewById(rootView, id);
+      if (description == null) {
+        break missingId;
+      }
+
       id = R.id.dialogButtonOK;
       Button dialogButtonOK = ViewBindings.findChildViewById(rootView, id);
       if (dialogButtonOK == null) {
@@ -91,26 +93,14 @@ public final class RoadworkDialogBinding implements ViewBinding {
 
       LinearLayout dialogInfo = (LinearLayout) rootView;
 
-      id = R.id.endDate;
-      TextView endDate = ViewBindings.findChildViewById(rootView, id);
-      if (endDate == null) {
-        break missingId;
-      }
-
-      id = R.id.startDate;
-      TextView startDate = ViewBindings.findChildViewById(rootView, id);
-      if (startDate == null) {
-        break missingId;
-      }
-
       id = R.id.title;
       TextView title = ViewBindings.findChildViewById(rootView, id);
       if (title == null) {
         break missingId;
       }
 
-      return new RoadworkDialogBinding((LinearLayout) rootView, additionalInfo, dialogButtonOK,
-          dialogInfo, endDate, startDate, title);
+      return new RoadworkDialogBinding((LinearLayout) rootView, additionalInfo, description,
+          dialogButtonOK, dialogInfo, title);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

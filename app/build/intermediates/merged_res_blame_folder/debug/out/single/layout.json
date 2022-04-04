@@ -18,5 +18,9 @@
     {
         "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/roadwork.xml",
         "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/roadwork.xml"
+    },
+    {
+        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/dialog.xml",
+        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/dialog.xml"
     }
 ]

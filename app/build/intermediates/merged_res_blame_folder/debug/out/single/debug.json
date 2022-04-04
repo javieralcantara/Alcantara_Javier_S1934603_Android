@@ -8,12 +8,12 @@
         "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/merged_res/debug/layout_roadwork_dialog.xml.flat",
-        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/roadwork_dialog.xml"
-    },
-    {
         "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/merged_res/debug/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
         "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/merged_res/debug/layout_roadwork_dialog.xml.flat",
+        "source": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/res/layout/roadwork_dialog.xml"
     },
     {
         "merged": "/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/build/intermediates/merged_res/debug/layout_incident.xml.flat",
