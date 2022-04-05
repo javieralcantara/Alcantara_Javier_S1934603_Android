@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -37,6 +40,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -136,6 +140,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Check internet connection
+        if(!isNetworkAvailable ()) {
+            Toast.makeText(
+                    getApplicationContext(),
+                    "Please check your Internet Connection",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
 
         // Initialize Handler.
         createUpdateUiHandler();
@@ -741,6 +754,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         message.obj = incidents.stream().filter(Item::isDisplay).collect(Collectors.toList());
         message.what = MESSAGE_INIT_INC_LIST;
         updateUIHandler.sendMessage(message);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
 

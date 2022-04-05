@@ -13,131 +13,130 @@
 11    <uses-permission android:name="android.permission.INTERNET" />
 11-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:5:5-67
 11-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:5:22-64
-12
-13    <!-- Include required permissions for Google Maps API to run. -->
-14    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-14-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:23:5-79
-14-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:23:22-76
-15
-16    <uses-feature
-16-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:26:5-28:35
-17        android:glEsVersion="0x00020000"
-17-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:27:9-41
-18        android:required="true" />
-18-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:28:9-32
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:6:5-79
+12-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:6:22-76
+13
+14    <uses-feature
+14-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:26:5-28:35
+15        android:glEsVersion="0x00020000"
+15-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:27:9-41
+16        android:required="true" />
+16-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:28:9-32
+17
+18    <queries>
+18-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:30:5-34:15
 19
-20    <queries>
-20-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:30:5-34:15
-21
-22        <!-- Needs to be explicitly declared on Android R+ -->
-23        <package android:name="com.google.android.apps.maps" />
-23-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:33:9-64
-23-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:33:18-61
-24    </queries>
-25
-26    <application
-26-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:7:5-41:19
-27        android:allowBackup="true"
-27-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:9:9-35
-28        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-28-->[androidx.core:core:1.7.0] /Users/javieralcantara/.gradle/caches/transforms-3/78c077d437fb427ab9708ed392f0c5bf/transformed/core-1.7.0/AndroidManifest.xml:24:18-86
-29        android:debuggable="true"
-30        android:extractNativeLibs="false"
-31        android:icon="@mipmap/ic_launcher"
-31-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:10:9-43
-32        android:label="@string/app_name"
-32-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:11:9-41
-33        android:roundIcon="@mipmap/ic_launcher_round"
-33-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:12:9-54
-34        android:supportsRtl="true"
-34-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:13:9-35
-35        android:theme="@style/Theme.Alcantara_Javier_S1934603_Android"
-35-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:14:9-71
-36        android:usesCleartextTraffic="true" >
-36-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:8:9-44
-37
-38        <!--
-39             TODO: Before you run your application, you need a Google Maps API key.
-40
-41             To get one, follow the directions here:
-42
-43                https://developers.google.com/maps/documentation/android-sdk/get-api-key
-44
-45             Once you have your API key (it starts with "AIza"), define a new property in your
-46             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
-47             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
-48        -->
-49        <meta-data
-49-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:27:9-29:71
-50            android:name="com.google.android.geo.API_KEY"
-50-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:28:13-58
-51            android:value="AIzaSyCCG-I1MFpcSwrNCr67RBIP43-NbmdDLbw" />
-51-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:29:13-68
-52
-53        <activity
-53-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:31:9-40:20
-54            android:name="com.example.alcantara_javier_s1934603_android.MapsActivity"
-54-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:32:13-41
-55            android:exported="true"
-55-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:33:13-36
-56            android:label="@string/title_activity_maps" >
-56-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:34:13-56
-57            <intent-filter>
-57-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:35:13-39:29
-58                <action android:name="android.intent.action.MAIN" />
-58-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:36:17-69
-58-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:36:25-66
-59
-60                <category android:name="android.intent.category.LAUNCHER" />
-60-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:38:17-77
-60-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:38:27-74
-61            </intent-filter>
-62        </activity>
-63        <!-- Needs to be explicitly declared on P+ -->
-64        <uses-library
-64-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:39:9-41:40
-65            android:name="org.apache.http.legacy"
-65-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:40:13-50
-66            android:required="false" />
-66-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:41:13-37
-67
-68        <activity
-68-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:9-22:45
-69            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-69-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:19-85
-70            android:exported="false"
-70-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:22:19-43
-71            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-71-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:21:19-78
-72
-73        <meta-data
-73-->[com.google.android.gms:play-services-basement:18.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/ed5bfe973c6ca2ccf644e3cfb17b7390/transformed/play-services-basement-18.0.0/AndroidManifest.xml:21:9-23:69
-74            android:name="com.google.android.gms.version"
-74-->[com.google.android.gms:play-services-basement:18.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/ed5bfe973c6ca2ccf644e3cfb17b7390/transformed/play-services-basement-18.0.0/AndroidManifest.xml:22:13-58
-75            android:value="@integer/google_play_services_version" />
-75-->[com.google.android.gms:play-services-basement:18.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/ed5bfe973c6ca2ccf644e3cfb17b7390/transformed/play-services-basement-18.0.0/AndroidManifest.xml:23:13-66
-76
-77        <provider
-77-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:26:9-34:20
-78            android:name="androidx.startup.InitializationProvider"
-78-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:27:13-67
-79            android:authorities="com.example.alcantara_javier_s1934603_android.androidx-startup"
-79-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:28:13-68
-80            android:exported="false" >
-80-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:29:13-37
-81            <meta-data
-81-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:31:13-33:52
-82                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-82-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:32:17-75
-83                android:value="androidx.startup" />
-83-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:33:17-49
-84            <meta-data
-84-->[androidx.lifecycle:lifecycle-process:2.4.0] /Users/javieralcantara/.gradle/caches/transforms-3/7e536dd4f47f2e7e1becef1fd3f739ce/transformed/lifecycle-process-2.4.0/AndroidManifest.xml:31:13-33:52
-85                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-85-->[androidx.lifecycle:lifecycle-process:2.4.0] /Users/javieralcantara/.gradle/caches/transforms-3/7e536dd4f47f2e7e1becef1fd3f739ce/transformed/lifecycle-process-2.4.0/AndroidManifest.xml:32:17-78
-86                android:value="androidx.startup" />
-86-->[androidx.lifecycle:lifecycle-process:2.4.0] /Users/javieralcantara/.gradle/caches/transforms-3/7e536dd4f47f2e7e1becef1fd3f739ce/transformed/lifecycle-process-2.4.0/AndroidManifest.xml:33:17-49
-87        </provider>
-88    </application>
-89
-90</manifest>
+20        <!-- Needs to be explicitly declared on Android R+ -->
+21        <package android:name="com.google.android.apps.maps" />
+21-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:33:9-64
+21-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:33:18-61
+22    </queries>
+23
+24    <application
+24-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:8:5-42:19
+25        android:allowBackup="true"
+25-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:10:9-35
+26        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+26-->[androidx.core:core:1.7.0] /Users/javieralcantara/.gradle/caches/transforms-3/78c077d437fb427ab9708ed392f0c5bf/transformed/core-1.7.0/AndroidManifest.xml:24:18-86
+27        android:debuggable="true"
+28        android:extractNativeLibs="false"
+29        android:icon="@mipmap/ic_launcher"
+29-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:11:9-43
+30        android:label="@string/app_name"
+30-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:12:9-41
+31        android:roundIcon="@mipmap/ic_launcher_round"
+31-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:13:9-54
+32        android:supportsRtl="true"
+32-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:14:9-35
+33        android:testOnly="true"
+34        android:theme="@style/Theme.Alcantara_Javier_S1934603_Android"
+34-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:15:9-71
+35        android:usesCleartextTraffic="true" >
+35-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:9:9-44
+36
+37        <!--
+38             TODO: Before you run your application, you need a Google Maps API key.
+39
+40             To get one, follow the directions here:
+41
+42                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+43
+44             Once you have your API key (it starts with "AIza"), define a new property in your
+45             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+46             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+47        -->
+48        <meta-data
+48-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:28:9-30:71
+49            android:name="com.google.android.geo.API_KEY"
+49-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:29:13-58
+50            android:value="AIzaSyCCG-I1MFpcSwrNCr67RBIP43-NbmdDLbw" />
+50-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:30:13-68
+51
+52        <activity
+52-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:32:9-41:20
+53            android:name="com.example.alcantara_javier_s1934603_android.MapsActivity"
+53-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:33:13-41
+54            android:exported="true"
+54-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:34:13-36
+55            android:label="@string/title_activity_maps" >
+55-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:35:13-56
+56            <intent-filter>
+56-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:36:13-40:29
+57                <action android:name="android.intent.action.MAIN" />
+57-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:37:17-69
+57-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:37:25-66
+58
+59                <category android:name="android.intent.category.LAUNCHER" />
+59-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:39:17-77
+59-->/Users/javieralcantara/AndroidStudioProjects/Alcantara_Javier_S1934603_Android/app/src/main/AndroidManifest.xml:39:27-74
+60            </intent-filter>
+61        </activity>
+62        <!-- Needs to be explicitly declared on P+ -->
+63        <uses-library
+63-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:39:9-41:40
+64            android:name="org.apache.http.legacy"
+64-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:40:13-50
+65            android:required="false" />
+65-->[com.google.android.gms:play-services-maps:18.0.2] /Users/javieralcantara/.gradle/caches/transforms-3/4f43e2163119751277da6b410bc973e8/transformed/play-services-maps-18.0.2/AndroidManifest.xml:41:13-37
+66
+67        <activity
+67-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:9-22:45
+68            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+68-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:19-85
+69            android:exported="false"
+69-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:22:19-43
+70            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+70-->[com.google.android.gms:play-services-base:18.0.1] /Users/javieralcantara/.gradle/caches/transforms-3/1d1e972ca78dafbe8a01b09db8dac2a7/transformed/play-services-base-18.0.1/AndroidManifest.xml:21:19-78
+71
+72        <meta-data
+72-->[com.google.android.gms:play-services-basement:18.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/ed5bfe973c6ca2ccf644e3cfb17b7390/transformed/play-services-basement-18.0.0/AndroidManifest.xml:21:9-23:69
+73            android:name="com.google.android.gms.version"
+73-->[com.google.android.gms:play-services-basement:18.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/ed5bfe973c6ca2ccf644e3cfb17b7390/transformed/play-services-basement-18.0.0/AndroidManifest.xml:22:13-58
+74            android:value="@integer/google_play_services_version" />
+74-->[com.google.android.gms:play-services-basement:18.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/ed5bfe973c6ca2ccf644e3cfb17b7390/transformed/play-services-basement-18.0.0/AndroidManifest.xml:23:13-66
+75
+76        <provider
+76-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:26:9-34:20
+77            android:name="androidx.startup.InitializationProvider"
+77-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:27:13-67
+78            android:authorities="com.example.alcantara_javier_s1934603_android.androidx-startup"
+78-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:28:13-68
+79            android:exported="false" >
+79-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:29:13-37
+80            <meta-data
+80-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:31:13-33:52
+81                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+81-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:32:17-75
+82                android:value="androidx.startup" />
+82-->[androidx.emoji2:emoji2:1.0.0] /Users/javieralcantara/.gradle/caches/transforms-3/3df8fd482ae380b0ca76a2a4a688b0ff/transformed/emoji2-1.0.0/AndroidManifest.xml:33:17-49
+83            <meta-data
+83-->[androidx.lifecycle:lifecycle-process:2.4.0] /Users/javieralcantara/.gradle/caches/transforms-3/7e536dd4f47f2e7e1becef1fd3f739ce/transformed/lifecycle-process-2.4.0/AndroidManifest.xml:31:13-33:52
+84                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+84-->[androidx.lifecycle:lifecycle-process:2.4.0] /Users/javieralcantara/.gradle/caches/transforms-3/7e536dd4f47f2e7e1becef1fd3f739ce/transformed/lifecycle-process-2.4.0/AndroidManifest.xml:32:17-78
+85                android:value="androidx.startup" />
+85-->[androidx.lifecycle:lifecycle-process:2.4.0] /Users/javieralcantara/.gradle/caches/transforms-3/7e536dd4f47f2e7e1becef1fd3f739ce/transformed/lifecycle-process-2.4.0/AndroidManifest.xml:33:17-49
+86        </provider>
+87    </application>
+88
+89</manifest>
