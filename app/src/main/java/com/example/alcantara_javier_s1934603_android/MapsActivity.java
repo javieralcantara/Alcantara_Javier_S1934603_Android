@@ -595,7 +595,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if(mCalendar.getTime().after(currentItem.getStartDate()) && mCalendar.getTime().before(currentItem.getEndDate()))
                     {
                         loc = new LatLng(roadWorks.get(i).getLatitude(), roadWorks.get(i).getLongitude());
-                        markers.add(new MarkerOptions().position(loc).title("Marker in " + roadWorks.get(i)));
+                        markers.add(new MarkerOptions().position(loc).title(roadWorks.get(i).getTitle()));
 
                         message = new Message();
                         message.what = MESSAGE_ADD_MARKER;
